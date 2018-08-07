@@ -4,9 +4,6 @@
 # Part of project name: arch-bootstrap 
 # Custom Arch Linux Installation Script (CALIS)
 
-###
-#TODO: 
-
 ################################### UTILS ###################################
 # DELIMITER
 readonly D_APP='[ CALIS ]'
@@ -27,11 +24,15 @@ readonly I_C="[ ${C_R}✖${C_E} ]"      # Cross
 readonly I_A="[ ${C_Y}?${C_E} ]"      # Ask
 
 echoIt () {
-  local msg=$1 ; local icon=${2:-''} ; echo "$D_APP$icon $msg" >&2
+  local msg=$1 ; local icon=${2:-''} ; echo "$D_APP$icon $msg" 
 }
 
 errorExit () {
   echo "$D_APP$I_C $1" 1>&2 ; exit 1
+}
+
+errorExitMainScript () {
+  errorExit "${C_R}Sth. went wrong. Aborting script! $C_E"
 }
 
 yesConfirm () {
@@ -46,18 +47,54 @@ yesConfirm () {
 }
 
 ################################### FNS  ###################################
+updateSystemClock () {
+  timedatectl set-ntp true
+  echoIt "Updated system clock." "$I_T"
+}
+
+createPartitions () {
+  echoIt "About to create partitions..." 
+  parted --script "${DEVICE_FULL}" -- mkpart primary ext4 1Mib "${PART_BOOT_SIZE}MiB" \
+    mkpart primary linux-swap "${PART_BOOT_SIZE}MiB" "${PART_SWAP_SIZE_RELATIVE}MiB" \
+    mkpart primary ext4 "${PART_SWAP_SIZE_RELATIVE}MiB" "${PART_ROOT_SIZE_RELATIVE}MiB" \
+    mkpart primary ext4 "${PART_ROOT_SIZE_RELATIVE}MiB" 100%
+} 
+
+showPartitionLayout () {
+  parted --script "${DEVICE_FULL}" -- print
+  echoIt "Created partitions." "$I_T"
+}
 
 ################################### VARS ###################################
 readonly HOSTNAME='arch-XXX'  
 readonly DEVICE='sda'
+readonly PART_BOOT_SIZE='250'
+readonly PART_SWAP_SIZE='2000'
+readonly PART_ROOT_SIZE='10000'
+
+readonly DEVICE_FULL="/dev/${DEVICE}"
+readonly PART_SWAP_SIZE_RELATIVE=$(( $PART_SWAP_SIZE + $PART_BOOT_SIZE))
+readonly PART_ROOT_SIZE_RELATIVE=$(( $PART_ROOT_SIZE + $PART_SWAP_SIZE_RELATIVE))
 
 ################################### MAIN ###################################
 main () {
   echoIt "Welcome to: Custom Arch Linux Installation Script (CALIS)"
   echoIt "Used variables:"
-  echoIt "  - hostname:   $HOSTNAME"
-  echoIt "  - device:     $DEVICE"
+  echoIt "  - hostname:       $HOSTNAME"
+  echoIt "  - device:         $DEVICE"
+  echoIt "    - 1. BOOT (MB): $PART_BOOT_SIZE"
+  echoIt "    - 2. SWAP (MB): $PART_SWAP_SIZE"
+  echoIt "    - 3. ROOT (MB): $PART_ROOT_SIZE"
+  echoIt "    - 4. HOME (MB): <the rest of the disk size>"
+  echoIt "Check above installation settings." "$I_W"
   yesConfirm "Ready to roll [y/n]? " 
+
+  #Setup fns:
+    updateSystemClock || errorExitMainScript
+    #Parition mgmt
+    createPartitions || errorExitMainScript
+    showPartitionLayout || errorExitMainScript
+
   echoIt "DONE!" "$I_T"
   exit 0
 }
