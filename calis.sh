@@ -4,9 +4,6 @@
 # Part of project name: arch-bootstrap 
 # Custom Arch Linux Installation Script (CALIS)
 
-###
-#TODO: 
-
 ################################### UTILS ###################################
 # DELIMITER
 readonly D_APP='[ CALIS ]'
@@ -27,11 +24,15 @@ readonly I_C="[ ${C_R}✖${C_E} ]"      # Cross
 readonly I_A="[ ${C_Y}?${C_E} ]"      # Ask
 
 echoIt () {
-  local msg=$1 ; local icon=${2:-''} ; echo "$D_APP$icon $msg" >&2
+  local msg=$1 ; local icon=${2:-''} ; echo "$D_APP$icon $msg" 
 }
 
 errorExit () {
   echo "$D_APP$I_C $1" 1>&2 ; exit 1
+}
+
+errorExitMainScript () {
+  errorExit "${C_R}Sth. went wrong. Aborting script! $C_E"
 }
 
 yesConfirm () {
@@ -46,18 +47,52 @@ yesConfirm () {
 }
 
 ################################### FNS  ###################################
+updateSystemClock () {
+  timedatectl set-ntp true
+}
+
+#TOSCAV:  EOF
+createPartitions () {
+local PART_LAYOUT=$(cat <<EOF
+0,250,L
+,2000,S
+,10000,L
+,,L
+EOF 
+)
+echo ${PART_LAYOUT} | sfdisk "/dev/${DEVICE}" -uM 
+}
+
+showPartitionLayout () {
+  sfdisk -l "/dev/${DEVICE}"
+}
 
 ################################### VARS ###################################
 readonly HOSTNAME='arch-XXX'  
 readonly DEVICE='sda'
+readonly PART_BOOT_SIZE='250'
+readonly PART_SWAP_SIZE='2000'
+readonly PART_ROOT_SIZE='10000'
 
 ################################### MAIN ###################################
 main () {
   echoIt "Welcome to: Custom Arch Linux Installation Script (CALIS)"
   echoIt "Used variables:"
-  echoIt "  - hostname:   $HOSTNAME"
-  echoIt "  - device:     $DEVICE"
+  echoIt "  - hostname:       $HOSTNAME"
+  echoIt "  - device:         $DEVICE"
+  echoIt "    - 1. BOOT (MB): $PART_BOOT_SIZE"
+  echoIt "    - 2. SWAP (MB): $PART_SWAP_SIZE"
+  echoIt "    - 3. ROOT (MB): $PART_ROOT_SIZE"
+  echoIt "    - 4. HOME (MB): <the rest of the disk size>"
+  echoIt "Check above installation settings." "$I_W"
   yesConfirm "Ready to roll [y/n]? " 
+
+  #Setup fns:
+    updateSystemClock || errorExitMainScript
+    #Parition mgmt
+    createPartitions || errorExitMainScript
+    showPartitionLayout || errorExitMainScript
+
   echoIt "DONE!" "$I_T"
   exit 0
 }
