@@ -94,6 +94,7 @@ main () {
     #Parition mgmt
     createPartitions || errorExitMainScript
     showPartitionLayout || errorExitMainScript
+    yesConfirm "Continue... [y/n]? " 
 
   echoIt "DONE!" "$I_T"
   exit 0
