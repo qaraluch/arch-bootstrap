@@ -49,22 +49,21 @@ yesConfirm () {
 ################################### FNS  ###################################
 updateSystemClock () {
   timedatectl set-ntp true
+  echoIt "Updated system clock." "$I_T"
 }
 
-#TOSCAV:  EOF
 createPartitions () {
-local PART_LAYOUT=$(cat <<EOF
-0,250,L
-,2000,S
-,10000,L
-,,L
-EOF 
-)
-echo ${PART_LAYOUT} | sfdisk "/dev/${DEVICE}" -uM 
-}
+  echoIt "About to create partitions..." 
+  parted --script "${DEVICE_FULL}" -- mklabel gpt \ 
+    mkpart primary ext4 1Mib "${PART_BOOT_SIZE}MiB" \
+    mkpart primary linux-swap "${PART_BOOT_SIZE}MiB" "${PART_SWAP_SIZE_RELATIVE}MiB" \
+    mkpart primary ext4 "${PART_SWAP_SIZE_RELATIVE}MiB" "${PART_ROOT_SIZE_RELATIVE}MiB" \
+    mkpart primary ext4 "${PART_ROOT_SIZE_RELATIVE}MiB" 100%
+} 
 
 showPartitionLayout () {
-  sfdisk -l "/dev/${DEVICE}"
+  parted --script "${DEVICE_FULL}" -- print
+  echoIt "Created partitions." "$I_T"
 }
 
 ################################### VARS ###################################
@@ -73,6 +72,10 @@ readonly DEVICE='sda'
 readonly PART_BOOT_SIZE='250'
 readonly PART_SWAP_SIZE='2000'
 readonly PART_ROOT_SIZE='10000'
+
+readonly DEVICE_FULL="/dev/${DEVICE}"
+readonly PART_SWAP_SIZE_RELATIVE=$(( $PART_SWAP_SIZE + $PART_BOOT_SIZE))
+readonly PART_ROOT_SIZE_RELATIVE=$(( $PART_ROOT_SIZE + $PART_SWAP_SIZE_RELATIVE))
 
 ################################### MAIN ###################################
 main () {
@@ -92,6 +95,7 @@ main () {
     #Parition mgmt
     createPartitions || errorExitMainScript
     showPartitionLayout || errorExitMainScript
+    yesConfirm "Continue... [y/n]? " 
 
   echoIt "DONE!" "$I_T"
   exit 0
