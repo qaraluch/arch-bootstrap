@@ -66,6 +66,22 @@ showPartitionLayout () {
   echoIt "Created partitions." "$I_T"
 }
 
+formatPartitionsAndMount () {
+  echoIt "About to format partitions..." 
+  mkfs.ext4 ${PART_BOOT}
+  mkfs.ext4 ${PART_ROOT}
+  mkfs.ext4 ${PART_HOME}
+  mkswap ${PART_SWAP}
+  echoIt "Formated partitions." "$I_T"
+  swapon /dev/sda2
+  mount ${PART_ROOT} /mnt
+  mkdir -p /mnt/boot
+  mount ${PART_BOOT} /mnt/boot
+  mkdir -p /mnt/home
+  mount ${PART_HOME} /mnt/home
+  echoIt "Mouted partitions." "$I_T"
+}
+
 ################################### VARS ###################################
 readonly HOSTNAME='arch-XXX'  
 readonly DEVICE='sda'
@@ -73,9 +89,14 @@ readonly PART_BOOT_SIZE='250'
 readonly PART_SWAP_SIZE='2000'
 readonly PART_ROOT_SIZE='10000'
 
+### Calculated vars:
 readonly DEVICE_FULL="/dev/${DEVICE}"
 readonly PART_SWAP_SIZE_RELATIVE=$(( $PART_SWAP_SIZE + $PART_BOOT_SIZE))
 readonly PART_ROOT_SIZE_RELATIVE=$(( $PART_ROOT_SIZE + $PART_SWAP_SIZE_RELATIVE))
+readonly PART_BOOT="${DEVICE_FULL}1"
+readonly PART_SWAP="${DEVICE_FULL}2"
+readonly PART_ROOT="${DEVICE_FULL}3"
+readonly PART_HOME="${DEVICE_FULL}4"
 
 ################################### MAIN ###################################
 main () {
@@ -96,6 +117,7 @@ main () {
     createPartitions || errorExitMainScript
     showPartitionLayout || errorExitMainScript
     yesConfirm "Continue... [y/n]? " 
+    formatPartitionsAndMount || errorExitMainScript
 
   echoIt "DONE!" "$I_T"
   exit 0
