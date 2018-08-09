@@ -100,12 +100,18 @@ generateFstabFile () {
   pressAnyKey
 }
 
+downloadChrootScript () {
+  echoIt "About to download calis-chroot.sh script..." 
+  curl -sL "${CHROOT_SOURCE}" > /mnt/chroot.sh
+}
+
 ################################### VARS ###################################
 readonly HOSTNAME='arch-XXX'  
 readonly DEVICE='sda'
 readonly PART_BOOT_SIZE='250'
 readonly PART_SWAP_SIZE='2000'
 readonly PART_ROOT_SIZE='10000'
+readonly CHROOT_SOURCE='https://raw.githubusercontent.com/qaraluch/arch-bootstrap/master/calis-chroot.sh'
 
 ### Calculated vars:
 readonly DEVICE_FULL="/dev/${DEVICE}"
@@ -126,6 +132,7 @@ main () {
   echoIt "    - 2. SWAP (MB): $PART_SWAP_SIZE"
   echoIt "    - 3. ROOT (MB): $PART_ROOT_SIZE"
   echoIt "    - 4. HOME (MB): <the rest of the disk size>"
+  echoIt "  - chroot source:  $CHROOT_SOURCE"
   echoIt "Check above installation settings." "$I_W"
   yesConfirm "Ready to roll [y/n]? " 
 
@@ -142,8 +149,14 @@ main () {
     echoIt ""
     echoIt "Everything is set up. Time to install Arch!"
     pressAnyKey
-    installArch 
-    generateFstabFile
+    installArch || errorExitMainScript 
+    generateFstabFile || errorExitMainScript
+    echoIt ""
+    echoIt "Ready to chroot?"
+    pressAnyKey
+    downloadChrootScript || errorExitMainScript 
+    echoIt "Chroot script is downloaded. So I need you to type in the console:"
+    echoIt "  # arch-chroot /mnt bash chroot.sh"
 
   echoIt "DONE!" "$I_T"
   exit 0
