@@ -51,6 +51,24 @@ pressAnyKey () {
   echo >&2
 }
 
+isEqualY () {
+  local STRING=$1
+  [[ "$STRING" == "Y" ]]
+}
+
+isEqualN () {
+  local STRING=$1
+  [[ "$STRING" == "N" ]]
+}
+
+switchYN () {
+  local SWITCH=$1
+  if isEqualY $SWITCH; then
+    return 0
+  else
+    return 1
+  fi
+} 
 ################################### FNS  ###################################
 updateSystemClock () {
   timedatectl set-ntp true
@@ -105,8 +123,8 @@ generateFstabFile () {
 }
 
 downloadChrootScript () {
-  echoIt "About to download calis-chroot.sh script..." 
   curl -sL "${CHROOT_SOURCE}" > /mnt/chroot.sh
+  echoIt "Download completed!" "$I_T"
 }
 
 ################################### VARS ###################################
@@ -116,6 +134,9 @@ readonly PART_BOOT_SIZE='250'
 readonly PART_SWAP_SIZE='2000'
 readonly PART_ROOT_SIZE='10000'
 readonly CHROOT_SOURCE='https://raw.githubusercontent.com/qaraluch/arch-bootstrap/master/calis-chroot.sh'
+readonly EXEC_PART_MGMT='Y'
+readonly EXEC_INSTALL_ARCH='Y'
+readonly EXEC_DOWN_CHROOT='Y'
 
 ### Calculated vars:
 readonly DEVICE_FULL="/dev/${DEVICE}"
@@ -137,30 +158,48 @@ main () {
   echoIt "    - 3. ROOT (MB): $PART_ROOT_SIZE"
   echoIt "    - 4. HOME (MB): <the rest of the disk size>"
   echoIt "  - chroot source:  $CHROOT_SOURCE"
+  echoIt "Execution subscripts flags:"
+  echoIt "  - run partition management    [Y]es/[N]o: $EXEC_PART_MGMT"
+  echoIt "  - run arch installation       [Y]es/[N]o: $EXEC_INSTALL_ARCH"
+  echoIt "  - run chroot script download  [Y]es/[N]o: $EXEC_DOWN_CHROOT"
   echoIt "Check above installation settings." "$I_W"
   yesConfirm "Ready to roll [y/n]? " 
 
   #Setup fns:
-    updateSystemClock || errorExitMainScript
-
-    #Partition mgmt
-    createPartitions || errorExitMainScript
-    showPartitionLayout || errorExitMainScript
-    yesConfirm "Continue... [y/n]? " 
-    formatPartitionsAndMount || errorExitMainScript
 
     #Install Arch
-    echoIt "Everything is set up. Time to install Arch!"
-    pressAnyKey
-    installArch || errorExitMainScript 
-    generateFstabFile || errorExitMainScript
-    pressAnyKey
-    downloadChrootScript || errorExitMainScript 
-    echoIt "Chroot script is downloaded. So I need you to type in the console:"
-    echoIt "  # arch-chroot /mnt bash chroot.sh"
 
-  echoIt "DONE!" "$I_T"
-  exit 0
+}
+
+execPartitionMgmt () {
+  updateSystemClock || errorExitMainScript
+  createPartitions || errorExitMainScript
+  showPartitionLayout || errorExitMainScript
+  yesConfirm "Continue... [y/n]? " 
+  formatPartitionsAndMount || errorExitMainScript
+  echoIt "Partitions are set up."
+}
+
+execInstallArch () {
+  echoIt "About to install Arch Linux."
+  pressAnyKey
+  installArch || errorExitMainScript 
+  generateFstabFile || errorExitMainScript
+}
+
+execDownChroot () {
+  echoIt "About to download calis-chroot.sh script..." 
+  pressAnyKey
+  downloadChrootScript || errorExitMainScript 
+  echoIt "Chroot script is downloaded. So I need you to type in the console:"
+  echoIt "  # arch-chroot /mnt bash chroot.sh"
 }
 
 main #run it!
+switchYN $EXEC_PART_MGMT && execPartitionMgmt
+switchYN $EXEC_PART_MGMT || echoIt "Skipped set up of partitions" "$I_C"
+switchYN $EXEC_INSTALL_ARCH && execInstallArch
+switchYN $EXEC_INSTALL_ARCH || echoIt "Skipped installation of Arch Linux" "$I_C"
+switchYN $EXEC_DOWN_CHROOT && execDownChroot
+switchYN $EXEC_DOWN_CHROOT || echoIt "Skipped downloading of chroot script" "$I_C"
+echoIt "DONE!" "$I_T"
