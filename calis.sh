@@ -72,6 +72,11 @@ showPartitionLayout () {
 }
 
 formatPartitionsAndMount () {
+  echoIt "About to wipe data..." 
+  wipefs "${PART_BOOT}"
+  wipefs "${PART_SWAP}"
+  wipefs "${PART_ROOT}"
+  wipefs "${PART_HOME}"
   echoIt "About to format partitions..." 
   mkfs.ext4 ${PART_BOOT}
   mkfs.ext4 ${PART_ROOT}
@@ -97,7 +102,6 @@ generateFstabFile () {
   echoIt "Generated fstab file." "$I_T"
   echoIt "See fstab file:" 
   more /mnt/etc/fstab
-  pressAnyKey
 }
 
 downloadChrootScript () {
@@ -150,7 +154,6 @@ main () {
     pressAnyKey
     installArch || errorExitMainScript 
     generateFstabFile || errorExitMainScript
-    echoIt "Ready to chroot?"
     pressAnyKey
     downloadChrootScript || errorExitMainScript 
     echoIt "Chroot script is downloaded. So I need you to type in the console:"
