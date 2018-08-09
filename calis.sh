@@ -46,6 +46,11 @@ yesConfirm () {
   fi
 }
 
+pressAnyKey () {
+  read -n 1 -s -r -p "$D_APP Press [any] key to continue."
+  echo >&2
+}
+
 ################################### FNS  ###################################
 updateSystemClock () {
   timedatectl set-ntp true
@@ -79,7 +84,7 @@ formatPartitionsAndMount () {
   mount ${PART_BOOT} /mnt/boot
   mkdir -p /mnt/home
   mount ${PART_HOME} /mnt/home
-  echoIt "Mouted partitions." "$I_T"
+  echoIt "Mounted partitions." "$I_T"
 }
 
 ################################### VARS ###################################
@@ -113,11 +118,14 @@ main () {
 
   #Setup fns:
     updateSystemClock || errorExitMainScript
-    #Parition mgmt
+    #Partition mgmt
     createPartitions || errorExitMainScript
     showPartitionLayout || errorExitMainScript
     yesConfirm "Continue... [y/n]? " 
     formatPartitionsAndMount || errorExitMainScript
+    echoIt ""
+    echoIt "Everything is set up. Time to install Arch!"
+    pressAnyKey
 
   echoIt "DONE!" "$I_T"
   exit 0
