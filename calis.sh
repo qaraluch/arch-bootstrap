@@ -87,6 +87,11 @@ formatPartitionsAndMount () {
   echoIt "Mounted partitions." "$I_T"
 }
 
+installArch () {
+  pacstrap /mnt base base-devel
+  echoIt "Installed Arch." "$I_T"
+}
+
 ################################### VARS ###################################
 readonly HOSTNAME='arch-XXX'  
 readonly DEVICE='sda'
@@ -118,14 +123,18 @@ main () {
 
   #Setup fns:
     updateSystemClock || errorExitMainScript
+
     #Partition mgmt
     createPartitions || errorExitMainScript
     showPartitionLayout || errorExitMainScript
     yesConfirm "Continue... [y/n]? " 
     formatPartitionsAndMount || errorExitMainScript
+
+    #Install Arch
     echoIt ""
     echoIt "Everything is set up. Time to install Arch!"
     pressAnyKey
+    installArch 
 
   echoIt "DONE!" "$I_T"
   exit 0
