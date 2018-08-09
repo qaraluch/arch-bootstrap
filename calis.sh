@@ -54,7 +54,7 @@ updateSystemClock () {
 
 createPartitions () {
   echoIt "About to create partitions..." 
-  parted --script "${DEVICE_FULL}" -- mklabel gpt \ 
+  parted --script "${DEVICE_FULL}" -- mklabel gpt \
     mkpart primary ext4 1Mib "${PART_BOOT_SIZE}MiB" \
     mkpart primary linux-swap "${PART_BOOT_SIZE}MiB" "${PART_SWAP_SIZE_RELATIVE}MiB" \
     mkpart primary ext4 "${PART_SWAP_SIZE_RELATIVE}MiB" "${PART_ROOT_SIZE_RELATIVE}MiB" \
