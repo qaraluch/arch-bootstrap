@@ -146,12 +146,10 @@ main () {
     formatPartitionsAndMount || errorExitMainScript
 
     #Install Arch
-    echoIt ""
     echoIt "Everything is set up. Time to install Arch!"
     pressAnyKey
     installArch || errorExitMainScript 
     generateFstabFile || errorExitMainScript
-    echoIt ""
     echoIt "Ready to chroot?"
     pressAnyKey
     downloadChrootScript || errorExitMainScript 
