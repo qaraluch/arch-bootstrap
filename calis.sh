@@ -92,6 +92,14 @@ installArch () {
   echoIt "Installed Arch." "$I_T"
 }
 
+generateFstabFile () {
+  genfstab -U /mnt >> /mnt/etc/fstab
+  echoIt "Generated fstab file." "$I_T"
+  echoIt "See fstab file:" 
+  more /mnt/etc/fstab
+  pressAnyKey
+}
+
 ################################### VARS ###################################
 readonly HOSTNAME='arch-XXX'  
 readonly DEVICE='sda'
@@ -135,6 +143,7 @@ main () {
     echoIt "Everything is set up. Time to install Arch!"
     pressAnyKey
     installArch 
+    generateFstabFile
 
   echoIt "DONE!" "$I_T"
   exit 0
