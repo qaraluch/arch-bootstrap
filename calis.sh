@@ -158,17 +158,12 @@ main () {
   echoIt "    - 3. ROOT (MB): $PART_ROOT_SIZE"
   echoIt "    - 4. HOME (MB): <the rest of the disk size>"
   echoIt "  - chroot source:  $CHROOT_SOURCE"
-  echoIt "Execution subscripts flags:"
+  echoIt "Execution subscript flags:"
   echoIt "  - run partition management    [Y]es/[N]o: $EXEC_PART_MGMT"
   echoIt "  - run arch installation       [Y]es/[N]o: $EXEC_INSTALL_ARCH"
   echoIt "  - run chroot script download  [Y]es/[N]o: $EXEC_DOWN_CHROOT"
   echoIt "Check above installation settings." "$I_W"
   yesConfirm "Ready to roll [y/n]? " 
-
-  #Setup fns:
-
-    #Install Arch
-
 }
 
 execPartitionMgmt () {
