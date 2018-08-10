@@ -54,22 +54,52 @@ pressAnyKey () {
 
 ################################### FNS  ###################################
 
+setupLocale () {
+  echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
+  echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+  echo "en_US ISO-8859-1" >> /etc/locale.gen
+  locale-gen
+  echoIt "Setup locale." "$I_T"
+}
+
+setupTimeZone () {
+  ln -sf /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
+  hwclock --systohc
+  echoIt "Setup timezone and clock." "$I_T"
+}
+
+setupKeyboard () {
+  cat <<EOT >> /etc/vconsole.conf
+KEYMAP=pl
+FONT=Lat2-Terminus16.psfu.gz
+FONT_MAP=8859-2
+EOT
+  echoIt "Setup keyboard layout." "$I_T"
+}
+
+setupHostName () {
+  echo "---------------> HOSTNAME SEE: ${HOSTNAME}"
+  /etc/hostname <<< $HOSTNAME
+  echoIt "Setup hostname." "$I_T"
+}
+
 ################################### VARS ###################################
 # readonly HOSTNAME='arch-XXX'  
 
 ### Calculated vars:
-readonly DEVICE_FULL="/dev/${DEVICE}"
+# readonly DEVICE_FULL="/dev/${DEVICE}"
 
 ################################### MAIN ###################################
 main () {
-  echoIt "Welcome to: Custom Arch Linux Installation Script (CALIS) - CHROOT"
+  echoIt "Welcome to: Custom Arch Linux Installation Script (CALIS - CHROOT)"
   echoIt "Used variables:"
   # echoIt "  - hostname:       $HOSTNAME"
   yesConfirm "Ready to roll [y/n]? " 
-
-  #Setup fns:
-    # createPartitions || errorExitMainScript
-    # yesConfirm "Continue... [y/n]? " 
+  setupLocale || errorExitMainScript
+  setupTimeZone || errorExitMainScript
+  setupKeyboard || errorExitMainScript
+  setupHostName || errorExitMainScript
+  # yesConfirm "Continue... [y/n]? " 
   echoIt "DONE!" "$I_T"
   exit 0
 }
