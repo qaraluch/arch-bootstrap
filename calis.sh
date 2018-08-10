@@ -145,6 +145,28 @@ runChroot () {
   echoIt "Chroot script ended. Clean it up too." "$I_T"
 }
 
+rebootNow () {
+  read -p "$D_APP$I_A Confirm reboot or skip it [y/n]?" -n 1 -r
+  echo >&2
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+    umount -R /mnt
+    swapoff ${PART_SWAP}
+    reboot
+  fi
+}
+
+orGoBackToChroot () {
+  read -p "$D_APP$I_A Maybe go to chroot again or skip it [y/n]?" -n 1 -r
+  echo >&2
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+    arch-chroot /mnt 
+  fi
+  clear 
+  echoIt "Nothing more to do... :("
+}
+
 ################################### VARS ###################################
 readonly HOSTNAME='arch-XXX'  
 readonly DEVICE='sda'
@@ -154,6 +176,7 @@ readonly PART_ROOT_SIZE='10000'
 readonly CHROOT_SOURCE='https://raw.githubusercontent.com/qaraluch/arch-bootstrap/master/calis-chroot.sh'
 readonly EXEC_PART_MGMT='Y'
 readonly EXEC_INSTALL_ARCH='Y'
+readonly EXEC_DOWN_CHROOT='Y'
 readonly EXEC_CHROOT='Y'
 
 ### Calculated vars:
@@ -179,6 +202,7 @@ main () {
   echoIt "Execution subscript flags:"
   echoIt "  - run partition management    [Y]es/[N]o: $EXEC_PART_MGMT"
   echoIt "  - run arch installation       [Y]es/[N]o: $EXEC_INSTALL_ARCH"
+  echoIt "  - download chroot script      [Y]es/[N]o: $EXEC_DOWN_CHROOT"
   echoIt "  - run chroot script           [Y]es/[N]o: $EXEC_CHROOT"
   echoIt "Check above installation settings." "$I_W"
   yesConfirm "Ready to roll [y/n]? " 
@@ -201,13 +225,31 @@ execInstallArch () {
   setupHostName || errorExitMainScript
 }
 
-execChroot () {
+execDownloadChroot () {
   echoIt "About to download calis-chroot.sh script..." 
-  pressAnyKey
   downloadChrootScript || errorExitMainScript 
   echoIt "Chroot script is downloaded." "$I_T"
+  echoIt "If you need edit some of this settings:" 
+  echoIt "  - locale"
+  echoIt "  - timezone"
+  echoIt "  - keyboard"
+  echoIt "  - bootloader"
+  echoIt "  - network manager"
+  echoIt "Abort this script and edit file /mnt/chroot.sh"
+  echoIt "and re-run only execution of chroot of CALIS script."
+  yesConfirm "Continue... [y/n]? " 
+}
+
+execChroot () {
   echoIt "Run arch-chroot..."
   runChroot || errorExitMainScript
+}
+
+reboot () {
+  echoIt "We are ready to reboot to brand new Arch Linux System..."
+  echoIt "Fingers crossed!"
+  rebootNow
+  orGoBackToChroot
 }
 
 #run it!
@@ -216,6 +258,9 @@ switchYN $EXEC_PART_MGMT && execPartitionMgmt
 switchYN $EXEC_PART_MGMT || echoIt "Skipped set up of partitions" "$I_C"
 switchYN $EXEC_INSTALL_ARCH && execInstallArch
 switchYN $EXEC_INSTALL_ARCH || echoIt "Skipped installation of Arch Linux" "$I_C"
+switchYN $EXEC_DOWN_CHROOT && execDownloadChroot
+switchYN $EXEC_DOWN_CHROOT || echoIt "Skipped downloading of chroot script" "$I_C"
 switchYN $EXEC_CHROOT && execChroot
-switchYN $EXEC_CHROOT || echoIt "Skipped downloading of chroot script" "$I_C"
-echoIt "DONE!" "$I_T"
+switchYN $EXEC_CHROOT || echoIt "Skipped run of chroot script" "$I_C"
+echoIt "ALL DONE!" "$I_T"
+reboot
