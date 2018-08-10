@@ -77,24 +77,29 @@ EOT
   echoIt "Setup keyboard layout." "$I_T"
 }
 
-################################### VARS ###################################
-# readonly HOSTNAME='arch-XXX'  
+installBootLoader () {
+  local DEVICE_FULL
+  echoIt "Installing bootloader: GRUB on device: ${DEVICE_FULL}"
+  pacman --noconfirm --needed -Syu grub \
+    && grub-install --target=i386-pc ${DEVICE_FULL} \
+    && grub-mkconfig -o /boot/grub/grub.cfg
+  echoIt "Installed bootloader" "$I_T"
+}
 
-### Calculated vars:
-# readonly DEVICE_FULL="/dev/${DEVICE}"
 
 ################################### MAIN ###################################
 main () {
+  local DEVICE_FULL=$1
   echoIt "Welcome to: Custom Arch Linux Installation Script (CALIS - CHROOT)"
-  echoIt "Used variables:"
-  # echoIt "  - hostname:       $HOSTNAME"
+  echoIt "Used variables from calis script:"
+  echoIt "  - hostname:       $DEVICE_FULL"
   yesConfirm "Ready to roll [y/n]? " 
   setupLocale || errorExitMainScript
   setupTimeZone || errorExitMainScript
   setupKeyboard || errorExitMainScript
-  # yesConfirm "Continue... [y/n]? " 
+  installBootLoader $DEVICE_FULL || errorExitMainScript
   echoIt "DONE!" "$I_T"
   exit 0
 }
 
-main #run it!
+main $1 #run it!

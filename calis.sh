@@ -131,6 +131,7 @@ setupHostName () {
 ::1		localhost
 # 127.0.1.1	myhostname.localdomain	myhostname
 EOT
+  # sed -i "8i 127.0.1.1\t$HOSTNAME.localdomain\t$HOSTNAME" /etc/hosts
   echoIt "Setup hostname." "$I_T"
 }
 
@@ -140,7 +141,7 @@ downloadChrootScript () {
 }
 
 runChroot () {
-  arch-chroot /mnt bash chroot.sh && rm /mnt/chroot.sh
+  arch-chroot /mnt bash chroot.sh ${DEVICE_FULL} && rm /mnt/chroot.sh
   echoIt "Chroot script ended. Clean it up too." "$I_T"
 }
 
