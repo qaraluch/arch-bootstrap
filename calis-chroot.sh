@@ -78,14 +78,21 @@ EOT
 }
 
 installBootLoader () {
-  local DEVICE_FULL
+  local DEVICE_FULL=$1
   echoIt "Installing bootloader: GRUB on device: ${DEVICE_FULL}"
+  pressAnyKey
   pacman --noconfirm --needed -Syu grub \
     && grub-install --target=i386-pc ${DEVICE_FULL} \
     && grub-mkconfig -o /boot/grub/grub.cfg
   echoIt "Installed bootloader" "$I_T"
 }
 
+installNetworkManager () {
+  pacman --noconfirm --needed -S networkmanager
+  systemctl enable NetworkManager
+  systemctl start NetworkManager
+  echoIt "Installed NetworkManager" "$I_T"
+}
 
 ################################### MAIN ###################################
 main () {
@@ -98,6 +105,7 @@ main () {
   setupTimeZone || errorExitMainScript
   setupKeyboard || errorExitMainScript
   installBootLoader $DEVICE_FULL || errorExitMainScript
+  installNetworkManager || errorExitMainScript
   echoIt "DONE!" "$I_T"
   exit 0
 }
