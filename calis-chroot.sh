@@ -55,7 +55,7 @@ pressAnyKey () {
 ################################### FNS  ###################################
 
 setupLocale () {
-  echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
+  echo "LANG=en_US.UTF-8" > /etc/locale.conf
   echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
   echo "en_US ISO-8859-1" >> /etc/locale.gen
   locale-gen
@@ -75,12 +75,6 @@ FONT=Lat2-Terminus16.psfu.gz
 FONT_MAP=8859-2
 EOT
   echoIt "Setup keyboard layout." "$I_T"
-}
-
-setupHostName () {
-  echo "---------------> HOSTNAME SEE: ${HOSTNAME}"
-  /etc/hostname <<< $HOSTNAME
-  echoIt "Setup hostname." "$I_T"
 }
 
 ################################### VARS ###################################

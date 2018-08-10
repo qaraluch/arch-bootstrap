@@ -124,6 +124,11 @@ generateFstabFile () {
   more /mnt/etc/fstab
 }
 
+setupHostName () {
+  $HOSTNAME > /mnt/etc/hostname 
+  echoIt "Setup hostname." "$I_T"
+}
+
 downloadChrootScript () {
   curl -sL "${CHROOT_SOURCE}" > /mnt/chroot.sh
   echoIt "Download completed!" "$I_T"
@@ -187,6 +192,7 @@ execInstallArch () {
   pressAnyKey
   installArch || errorExitMainScript 
   generateFstabFile || errorExitMainScript
+  setupHostName || errorExitMainScript
 }
 
 execChroot () {
