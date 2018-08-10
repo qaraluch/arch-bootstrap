@@ -3,6 +3,7 @@
 # Author: qaraluch - 08.2018 - MIT
 # Part of project name: arch-bootstrap 
 # Custom Arch Linux Installation Script (CALIS)
+# Many thanks to LukeSmithxyz for inspiration!
 
 ################################### UTILS ###################################
 # DELIMITER
@@ -69,6 +70,7 @@ switchYN () {
     return 1
   fi
 } 
+
 ################################### FNS  ###################################
 updateSystemClock () {
   timedatectl set-ntp true
@@ -127,6 +129,11 @@ downloadChrootScript () {
   echoIt "Download completed!" "$I_T"
 }
 
+runChroot () {
+  arch-chroot /mnt bash chroot.sh && rm /mnt/chroot.sh
+  echoIt "Chroot script ended. Clean it up too." "$I_T"
+}
+
 ################################### VARS ###################################
 readonly HOSTNAME='arch-XXX'  
 readonly DEVICE='sda'
@@ -161,7 +168,7 @@ main () {
   echoIt "Execution subscript flags:"
   echoIt "  - run partition management    [Y]es/[N]o: $EXEC_PART_MGMT"
   echoIt "  - run arch installation       [Y]es/[N]o: $EXEC_INSTALL_ARCH"
-  echoIt "  - run chroot script download  [Y]es/[N]o: $EXEC_DOWN_CHROOT"
+  echoIt "  - run chroot script           [Y]es/[N]o: $EXEC_CHROOT"
   echoIt "Check above installation settings." "$I_W"
   yesConfirm "Ready to roll [y/n]? " 
 }
@@ -182,19 +189,21 @@ execInstallArch () {
   generateFstabFile || errorExitMainScript
 }
 
-execDownChroot () {
+execChroot () {
   echoIt "About to download calis-chroot.sh script..." 
   pressAnyKey
   downloadChrootScript || errorExitMainScript 
-  echoIt "Chroot script is downloaded. So I need you to type in the console:"
-  echoIt "  # arch-chroot /mnt bash chroot.sh"
+  echoIt "Chroot script is downloaded." "$I_T"
+  echoIt "Run arch-chroot..."
+  runChroot || errorExitMainScript
 }
 
-main #run it!
+#run it!
+main 
 switchYN $EXEC_PART_MGMT && execPartitionMgmt
 switchYN $EXEC_PART_MGMT || echoIt "Skipped set up of partitions" "$I_C"
 switchYN $EXEC_INSTALL_ARCH && execInstallArch
 switchYN $EXEC_INSTALL_ARCH || echoIt "Skipped installation of Arch Linux" "$I_C"
-switchYN $EXEC_DOWN_CHROOT && execDownChroot
-switchYN $EXEC_DOWN_CHROOT || echoIt "Skipped downloading of chroot script" "$I_C"
+switchYN $EXEC_CHROOT && execChroot
+switchYN $EXEC_CHROOT || echoIt "Skipped downloading of chroot script" "$I_C"
 echoIt "DONE!" "$I_T"
