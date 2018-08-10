@@ -143,7 +143,7 @@ readonly PART_ROOT_SIZE='10000'
 readonly CHROOT_SOURCE='https://raw.githubusercontent.com/qaraluch/arch-bootstrap/master/calis-chroot.sh'
 readonly EXEC_PART_MGMT='Y'
 readonly EXEC_INSTALL_ARCH='Y'
-readonly EXEC_DOWN_CHROOT='Y'
+readonly EXEC_CHROOT='Y'
 
 ### Calculated vars:
 readonly DEVICE_FULL="/dev/${DEVICE}"
