@@ -125,7 +125,12 @@ generateFstabFile () {
 }
 
 setupHostName () {
-  $HOSTNAME > /mnt/etc/hostname 
+  echo $HOSTNAME > /mnt/etc/hostname 
+  cat <<EOT >> /mnt/etc/hosts
+127.0.0.1	localhost
+::1		localhost
+# 127.0.1.1	myhostname.localdomain	myhostname
+EOT
   echoIt "Setup hostname." "$I_T"
 }
 

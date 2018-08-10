@@ -92,7 +92,6 @@ main () {
   setupLocale || errorExitMainScript
   setupTimeZone || errorExitMainScript
   setupKeyboard || errorExitMainScript
-  setupHostName || errorExitMainScript
   # yesConfirm "Continue... [y/n]? " 
   echoIt "DONE!" "$I_T"
   exit 0
