@@ -165,7 +165,7 @@ rebootNow () {
   then
     umount -R /mnt
     swapoff ${PART_SWAP}
-    reboot
+    shutdown -h now
   fi
 }
 
@@ -237,7 +237,7 @@ execDownloadChroot () {
   echoIt "  - bootloader"
   echoIt "  - network manager"
   echoIt "Abort this script and edit file /mnt/chroot.sh"
-  echoIt "and re-run only execution of chroot of CALIS script."
+  echoIt "Re-run only execution of chroot of CALIS script afterwords."
   yesConfirm "Continue... [y/n]? " 
 }
 
