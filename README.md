@@ -1,3 +1,5 @@
+![arch-bootstrap-logo](./pic/logo.jpg)
+
 # arch-bootstrap
 
 > Set of bash scripts for bootstrapping Arch Linux.
