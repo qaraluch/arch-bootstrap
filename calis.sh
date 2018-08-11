@@ -91,7 +91,7 @@ updateSystemClock () {
 
 createPartitions () {
   echoIt "About to create partitions..." 
-  parted --script "${DEVICE_FULL}" -- mklabel gpt \
+  parted --script "${DEVICE_FULL}" -- mklabel msdos \
     mkpart primary ext4 1Mib "${PART_BOOT_SIZE}MiB" \
     set 1 boot on \
     mkpart primary linux-swap "${PART_BOOT_SIZE}MiB" "${PART_SWAP_SIZE_RELATIVE}MiB" \
@@ -116,7 +116,7 @@ formatPartitionsAndMount () {
   mkfs.ext4 ${PART_HOME}
   mkswap ${PART_SWAP}
   echoIt "Formated partitions." "$I_T"
-  swapon /dev/sda2
+  swapon ${PART_SWAP} 
   mount ${PART_ROOT} /mnt
   mkdir -p /mnt/boot
   mount ${PART_BOOT} /mnt/boot
