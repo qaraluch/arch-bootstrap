@@ -93,6 +93,7 @@ createPartitions () {
   echoIt "About to create partitions..." 
   parted --script "${DEVICE_FULL}" -- mklabel gpt \
     mkpart primary ext4 1Mib "${PART_BOOT_SIZE}MiB" \
+    set 1 boot on \
     mkpart primary linux-swap "${PART_BOOT_SIZE}MiB" "${PART_SWAP_SIZE_RELATIVE}MiB" \
     mkpart primary ext4 "${PART_SWAP_SIZE_RELATIVE}MiB" "${PART_ROOT_SIZE_RELATIVE}MiB" \
     mkpart primary ext4 "${PART_ROOT_SIZE_RELATIVE}MiB" 100%
@@ -245,7 +246,7 @@ execChroot () {
   runChroot || errorExitMainScript
 }
 
-reboot () {
+execReboot () {
   echoIt "We are ready to reboot to brand new Arch Linux System..."
   echoIt "Fingers crossed!"
   rebootNow
@@ -263,4 +264,4 @@ switchYN $EXEC_DOWN_CHROOT || echoIt "Skipped downloading of chroot script" "$I_
 switchYN $EXEC_CHROOT && execChroot
 switchYN $EXEC_CHROOT || echoIt "Skipped run of chroot script" "$I_C"
 echoIt "ALL DONE!" "$I_T"
-reboot
+execReboot
