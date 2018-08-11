@@ -5,6 +5,18 @@
 # Custom Arch Linux Installation Script (CALIS)
 # Many thanks to LukeSmithxyz for inspiration!
 
+################################### VARS ###################################
+readonly HOSTNAME='arch-XXX'
+readonly DEVICE='sda'
+readonly PART_BOOT_SIZE='250'
+readonly PART_SWAP_SIZE='2000'
+readonly PART_ROOT_SIZE='10000'
+readonly CHROOT_SOURCE='https://raw.githubusercontent.com/qaraluch/arch-bootstrap/master/calis-chroot.sh'
+readonly EXEC_PART_MGMT='Y'
+readonly EXEC_INSTALL_ARCH='Y'
+readonly EXEC_DOWN_CHROOT='Y'
+readonly EXEC_CHROOT='Y'
+
 ################################### UTILS ###################################
 # DELIMITER
 readonly D_APP='[ CALIS ]'
@@ -166,18 +178,6 @@ orGoBackToChroot () {
   clear 
   echoIt "Nothing more to do... :("
 }
-
-################################### VARS ###################################
-readonly HOSTNAME='arch-XXX'  
-readonly DEVICE='sda'
-readonly PART_BOOT_SIZE='250'
-readonly PART_SWAP_SIZE='2000'
-readonly PART_ROOT_SIZE='10000'
-readonly CHROOT_SOURCE='https://raw.githubusercontent.com/qaraluch/arch-bootstrap/master/calis-chroot.sh'
-readonly EXEC_PART_MGMT='Y'
-readonly EXEC_INSTALL_ARCH='Y'
-readonly EXEC_DOWN_CHROOT='Y'
-readonly EXEC_CHROOT='Y'
 
 ### Calculated vars:
 readonly DEVICE_FULL="/dev/${DEVICE}"
