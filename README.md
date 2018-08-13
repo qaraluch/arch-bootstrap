@@ -45,7 +45,7 @@ Boot with the Arch Linux image found [here](https://www.archlinux.org/download/)
 Download the script with:
 
 ```
-curl https://git.io/fNDtC -Lo calis.sh
+curl -LO https://git.io/calis.sh
 ```
 
 or
