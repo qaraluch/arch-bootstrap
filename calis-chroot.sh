@@ -1,112 +1,104 @@
 #!/usr/bin/env bash
-
 # Author: qaraluch - 08.2018 - MIT
-# Part of project name: arch-bootstrap 
+# Part of the repo: arch-bootstrap
 # Custom Arch Linux Installation Script (CALIS)
-# ARCH-CHROOT
+# Chroot part
 
-################################### UTILS ###################################
-# DELIMITER
-readonly D_APP='[ CALIS-CHROOT ]'
-
-# COLORS
-readonly C_R=$'\033[0;31m'            # Red
-readonly C_G=$'\033[1;32m'            # Green
-readonly C_Y=$'\033[1;33m'            # Yellow
-readonly C_B=$'\033[1;34m'            # Blue
-readonly C_M=$'\033[1;35m'            # Magenta
-readonly C_C=$'\033[1;36m'            # Cyan
-readonly C_E=$'\033[0m'               # End
-
-# ICONS
-readonly I_T="[ ${C_G}✔${C_E} ]"      # Tick
-readonly I_W="[ ${C_Y}!${C_E} ]"      # Warn
-readonly I_C="[ ${C_R}✖${C_E} ]"      # Cross
-readonly I_A="[ ${C_Y}?${C_E} ]"      # Ask
-
-echoIt () {
-  local msg=$1 ; local icon=${2:-''} ; echo "$D_APP$icon $msg" 
+# Main
+main() {
+  local devicePath=$1
+  _echoIt "${_pDel}" "Welcome to: Custom Arch Linux Installation Script (CALIS - CHROOT)"
+  _echoIt "${_pDel}" "Used variables from calis script:"
+  _echoIt "${_pDel}" "  - device:       $devicePath"
+  _yesConfirmOrAbort "Ready to roll"
+  setupLocale
+  setupTimeZone
+  setupKeyboard
+  installBootLoader $devicePath
+  installNetworkManager
+  _echoIt "${_pDel}" "DONE!" "$_it"
 }
 
-errorExit () {
-  echo "$D_APP$I_C $1" 1>&2 ; exit 1
-}
-
-errorExitMainScript () {
-  errorExit "${C_R}Sth. went wrong. Aborting script! $C_E"
-}
-
-yesConfirm () {
-  local ABORT_MSG_DEFAULT="Abort script!"
-  local ABORT_MSG=${2:-$ABORT_MSG_DEFAULT}
-  read -p "$D_APP$I_A $1" -n 1 -r
-  echo >&2
-  if [[ ! $REPLY =~ ^[Yy]$ ]]
-  then
-      errorExit "$ABORT_MSG" 
-  fi
-}
-
-pressAnyKey () {
-  read -n 1 -s -r -p "$D_APP Press [any] key to continue."
-  echo >&2
-}
-
-################################### FNS  ###################################
-setupLocale () {
+setupLocale() {
   echo "LANG=en_US.UTF-8" > /etc/locale.conf
   echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
   echo "en_US ISO-8859-1" >> /etc/locale.gen
   locale-gen
-  echoIt "Setup locale." "$I_T"
+  _echoIt "${_pDel}" "Setup locale." "$_it"
 }
 
-setupTimeZone () {
+setupTimeZone() {
   ln -sf /usr/share/zoneinfo/Europe/Warsaw /etc/localtime
   hwclock --systohc
-  echoIt "Setup timezone and clock." "$I_T"
+  _echoIt "${_pDel}" "Setup timezone and clock." "$_it"
 }
 
-setupKeyboard () {
+setupKeyboard() {
   cat <<EOT >> /etc/vconsole.conf
 KEYMAP=pl
 FONT=Lat2-Terminus16.psfu.gz
 FONT_MAP=8859-2
 EOT
-  echoIt "Setup keyboard layout." "$I_T"
+  _echoIt "${_pDel}" "Setup keyboard layout." "$_it"
 }
 
-installBootLoader () {
-  local DEVICE_FULL=$1
-  echoIt "Installing bootloader: GRUB on device: ${DEVICE_FULL}"
-  pressAnyKey
+installBootLoader() {
+  local device=$1
+  _echoIt "${_pDel}" "Installing bootloader: GRUB on device: ${device}"
+  _pressAnyKey
   pacman --noconfirm --needed -Syu grub \
-    && grub-install --target=i386-pc ${DEVICE_FULL} \
+    && grub-install --target=i386-pc ${device} \
     && grub-mkconfig -o /boot/grub/grub.cfg
-  echoIt "Installed bootloader" "$I_T"
+  _echoIt "${_pDel}" "Installed bootloader" "$_it"
 }
 
-installNetworkManager () {
+installNetworkManager() {
   pacman --noconfirm --needed -S networkmanager
   systemctl enable NetworkManager
   systemctl start NetworkManager
-  echoIt "Installed NetworkManager" "$I_T"
+  _echoIt "${_pDel}" "Installed NetworkManager" "$_it"
 }
 
-################################### MAIN ###################################
-main () {
-  local DEVICE_FULL=$1
-  echoIt "Welcome to: Custom Arch Linux Installation Script (CALIS - CHROOT)"
-  echoIt "Used variables from calis script:"
-  echoIt "  - hostname:       $DEVICE_FULL"
-  yesConfirm "Ready to roll [y/n]? " 
-  setupLocale || errorExitMainScript
-  setupTimeZone || errorExitMainScript
-  setupKeyboard || errorExitMainScript
-  installBootLoader $DEVICE_FULL || errorExitMainScript
-  installNetworkManager || errorExitMainScript
-  echoIt "DONE!" "$I_T"
-  exit 0
+################################### UTILS ###################################
+# DELIMITER
+readonly _pDel='[ CALIS-CHROOT ]'
+
+export _cr=$'\033[0;31m'            # color red
+export _cg=$'\033[1;32m'            # color green
+export _cy=$'\033[1;33m'            # color yellow
+export _cb=$'\033[1;34m'            # color blue
+export _cm=$'\033[1;35m'            # color magenta
+export _cc=$'\033[1;36m'            # color cyan
+export _ce=$'\033[0m'               # color end
+
+export _it="[ ${_cg}✔${_ce} ]"        # icon tick
+export _iw="[ ${_cy}!${_ce} ]"       # icon warn
+export _ic="[ ${_cr}✖${_ce} ]"      # icon cross
+export _ia="[ ${_cy}?${_ce} ]"      # icon ask
+
+_echoIt() {
+  local delimiter=$1 ; local msg=$2 ; local icon=${3:-''} ; echo "${delimiter}${icon} $msg" >&2
 }
 
-main $1 #run it!
+_errorExit() {
+  local delimiter=$1 ; local msg=$2 ; local icon=${3:-"$_ic"} ; echo "${delimiter}${icon} ${msg}" 1>&2 ; exit 1
+}
+
+_yesConfirmOrAbort() {
+  local msg=${1:-'Continue'}
+  local msgDefaultAbort=${2:-'Abort script!'}
+  read -n 1 -s -r -p "${_pDel}${_ia} ${msg} [Y/n]?"
+  echo >&2
+  REPLY=${REPLY:-'Y'}
+  if [[ ! $REPLY =~ ^[Yy]$ ]] ; then
+    _errorExit "${_pDel}" "${msgDefaultAbort}"
+  fi
+}
+
+_pressAnyKey() {
+  read -n 1 -s -r -p "${_pDel}${_ia} Press [any] key to continue. "
+  echo >&2
+}
+
+# Main run!
+main $1
