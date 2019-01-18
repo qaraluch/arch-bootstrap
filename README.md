@@ -67,7 +67,7 @@ For more info read the source code :page_facing_up:.
 
 ## Credists
 
-Many thanks to LukeSmithXYZ for inspirations.
+Many thanks to LukeSmithxyz for inspirations.
 
 ## License
 
