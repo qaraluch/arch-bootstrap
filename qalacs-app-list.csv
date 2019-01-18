@@ -1,0 +1,28 @@
+SWITCH,REPO-TYPE,NAME,PURPOSE
+Y,d,vim,[basic] Default text editor.
+Y,d,git,[basic] Version-control system for tracking changes in computer files.
+Y,d,base-devel,[basic] Basic package including tools needed for building, compiling and linking.
+Y,d,rsync,[basic] Utility for efficiently transferring and synchronizing files across computer systems.
+Y,d,tree,[basic] Shows directory tree structure.
+Y,d,locate,[basic] Finds files by name.
+Y,d,fzf,[dotfiles] A command-line fuzzy finder.
+Y,d,zsh,[dotfiles] Extended Bourne shell with a large number of improvements.
+Y,d,tmux,Terminal multiplexer.
+Y,d,xclip,[X11] Command line interface to the X11 clipboard.
+Y,d,feh,[X11] Fast and light image viewer.
+Y,d,xorg-server,[X11] Display server for the X Window.
+Y,d,xorg-xinit,[X11] Program allows a user to manually start an Xorg display server.
+Y,d,xorg-xdpyinfo,[X11] Retrieves screen information for some scripts.
+Y,d,xorg-xwininfo,[X11] Allows querying information about windows.
+Y,d,xcompmgr,[X11] Utility for transparency and removing screen-tearing.
+Y,d,i3-gaps,[i3wm] i3wm with gaps as window manager.
+Y,d,i3blocks,[i3wm] i3wm status bar.
+Y,d,i3lock,[i3wm] The screen lock.user interface.
+Y,d,ffmpeg,[tool] software suite of libraries and programs for handling video, audio, and other multimedia files and streams.
+Y,g,/LukeSmithxyz/st.git,[X11] Simple terminal implementation for X.
+Y,d,chromium,[tool] Browser.
+N,d,firefox,[tool] Browser.
+N,d,virtualbox-guest-utils,[VBox] Guest utilities for Virtual Box.
+Y,d,ttf-dejavou,[rice] Font.
+Y,d,ttf-liberation,[rice] Font.
+Y,d,screenfetch,[rice] Bash script that displays system information alongside the ASCII distribution logo.
