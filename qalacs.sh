@@ -21,7 +21,7 @@ main() {
   _isStringEmpty "$_pArgs" && printCommandsUsage
   parseCommand "$_pArgs"
   if _isStringEqual "$cmd" "download" ; then
-    echo run download
+    execCmd_downloadAppList
     _echoDone
   elif _isStringEqual "$cmd" "run" ; then
     echo run setup
@@ -83,33 +83,41 @@ Usage:
 
   ${_pName} ${_cy}run${_ce}       - run setup script.
 
+  ${_pName} ${_cy}show${_ce}      - show app list that will be installed.
+
 EOL
 }
 
 # Calculated vars
-readonly device_full="/dev/${p_device}"
+# readonly device_full="/dev/${p_device}"
 
-execPartitionMgmt() {
-  updateSystemClock
-  _yesConfirmOrAbort
-  _pressAnyKey
-  _echoIt "${_pDel}" "Partitions are set up."
+# Command download:
+execCmd_downloadAppList() {
+  _echoIt "$_pDel" "About to download app list..."
+  local tmpDir='/tmp/qalacs'
+  local source="${p_app_list}"
+  local destination="${tmpDir}/qalacs-app-list.csv"
+  createTempDir
+  curlFile
 }
 
-updateSystemClock() {
-  timedatectl set-ntp true
-  _echoIt "${_pDel}" "Updated system clock." "$_it"
+createTempDir() {
+  _isDir "${tmpDir}" || mkdir "${tmpDir}"
+  [[ $? ]] && _echoIt "${_pDel}" "  ... created temporary dir for download: "${tmpDir}""
 }
 
-execDownloadChroot() {
-  _echoIt "${_pDel}" "About to download calis-chroot.sh script..."
-  downloadChrootScript
+curlFile() {
+  curl -sL "${source}" > "${destination}"
+  [[ $? ]] && _echoIt "${_pDel}" "Download of the file: ${_cy}"${destination##*/}${_ce}" completed!" "$_it"
 }
 
-downloadChrootScript() {
-  curl -sL "${p_chroot_source}" > /mnt/chroot.sh
-  _echoIt "${_pDel}" "Download completed!" "$_it"
-}
+# #------
+# execPartitionMgmt() {
+#   updateSystemClock
+#   _yesConfirmOrAbort
+#   _pressAnyKey
+#   _echoIt "${_pDel}" "Partitions are set up."
+# }
 
 # Utils
 readonly _pDel='[ QALACS ]'
@@ -179,6 +187,10 @@ _isStringEqual(){
   [[ "$1" == "$2" ]]
 }
 
+_isDir() {
+  local dir=$1
+  [[ -d $dir ]]
+}
 
 # Main run!
 main
