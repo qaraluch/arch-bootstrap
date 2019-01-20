@@ -1,7 +1,7 @@
 SWITCH,REPO-TYPE,NAME,PURPOSE
 Y,d,vim,[basic] Default text editor.
 Y,d,git,[basic] Version-control system for tracking changes in computer files.
-Y,d,base-devel,[basic] Basic package including tools needed for building, compiling and linking.
+Y,d,base-devel,[basic] Basic package including tools needed for building compiling and linking.
 Y,d,rsync,[basic] Utility for efficiently transferring and synchronizing files across computer systems.
 Y,d,tree,[basic] Shows directory tree structure.
 Y,d,locate,[basic] Finds files by name.
@@ -18,7 +18,7 @@ Y,d,xcompmgr,[X11] Utility for transparency and removing screen-tearing.
 Y,d,i3-gaps,[i3wm] i3wm with gaps as window manager.
 Y,d,i3blocks,[i3wm] i3wm status bar.
 Y,d,i3lock,[i3wm] The screen lock.user interface.
-Y,d,ffmpeg,[tool] software suite of libraries and programs for handling video, audio, and other multimedia files and streams.
+Y,d,ffmpeg,[tool] software suite of libraries and programs for handling video audio and other multimedia files and streams.
 Y,g,/LukeSmithxyz/st.git,[X11] Simple terminal implementation for X.
 Y,d,chromium,[tool] Browser.
 N,d,firefox,[tool] Browser.
