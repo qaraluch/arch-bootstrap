@@ -14,6 +14,11 @@ readonly p_app_list='https://raw.githubusercontent.com/qaraluch/arch-bootstrap/m
 readonly p_exec_part_XXX='Y'
 #############################################################################################################
 
+readonly tempDir='/tmp/qalacs'
+readonly localAppListName='qalacs-app-list.csv'
+# Calculated vars
+readonly appListDownloadPath="${tempDir}/${localAppListName}"
+
 # Main
 main() {
   local cmd
@@ -22,6 +27,9 @@ main() {
   parseCommand "$_pArgs"
   if _isStringEqual "$cmd" "download" ; then
     execCmd_downloadAppList
+    _echoDone
+  elif _isStringEqual "$cmd" "show" ; then
+    execCmd_showAppList
     _echoDone
   elif _isStringEqual "$cmd" "run" ; then
     echo run setup
@@ -44,6 +52,11 @@ parseCommand() {
     do
     command="$1"
     case $command in
+        show)
+        cmd="$command"
+        shift
+        break
+        ;;
         download)
         cmd="$command"
         shift
@@ -88,22 +101,18 @@ Usage:
 EOL
 }
 
-# Calculated vars
-# readonly device_full="/dev/${p_device}"
-
 # Command download:
 execCmd_downloadAppList() {
   _echoIt "$_pDel" "About to download app list..."
-  local tmpDir='/tmp/qalacs'
   local source="${p_app_list}"
-  local destination="${tmpDir}/qalacs-app-list.csv"
+  local destination="${appListDownloadPath}"
   createTempDir
   curlFile
 }
 
 createTempDir() {
-  _isDir "${tmpDir}" || mkdir "${tmpDir}"
-  [[ $? ]] && _echoIt "${_pDel}" "  ... created temporary dir for download: "${tmpDir}""
+  _isDir "${tempDir}" || mkdir "${tempDir}"
+  [[ $? ]] && _echoIt "${_pDel}" "  ... created temporary dir for download: "${tempDir}""
 }
 
 curlFile() {
@@ -111,7 +120,26 @@ curlFile() {
   [[ $? ]] && _echoIt "${_pDel}" "Download of the file: ${_cy}"${destination##*/}${_ce}" completed!" "$_it"
 }
 
+# Command show:
+execCmd_showAppList() {
+  _echoIt "$_pDel" "List of apps that will be installed:"
+  local appListYesOnly="$(getAppListYesOnly)"
+  showAppList
+}
+
+getAppListYesOnly() {
+  echo "$(cat "${appListDownloadPath}" | sed -n '/^Y,/p')"
+}
+
+showAppList() {
+  echo "${appListYesOnly}" \
+  | sed -e "1d" \
+  | awk -F "\"*,\"*" '{printf " - \033[1;33m%-35s\033[0m - %s\n",$3,$4}'
+}
+
 # #------
+  # local appNames=( "$( cut -d , -f3 <<< "${appListYesOnly}")" )
+  # local appDescriptions=( "$( cut -d , -f4- <<< "${appListYesOnly}")" )
 # execPartitionMgmt() {
 #   updateSystemClock
 #   _yesConfirmOrAbort
