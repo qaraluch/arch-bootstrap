@@ -4,7 +4,7 @@ Y,d,git,[basic] Version-control system for tracking changes in computer files.
 Y,d,base-devel,[basic] Basic package including tools needed for building compiling and linking.
 Y,d,rsync,[basic] Utility for efficiently transferring and synchronizing files across computer systems.
 Y,d,tree,[basic] Shows directory tree structure.
-Y,d,locate,[basic] Finds files by name.
+Y,d,mlocate,[basic] Finds files by name.
 Y,d,fzf,[dotfiles] A command-line fuzzy finder.
 Y,d,zsh,[dotfiles] Extended Bourne shell with a large number of improvements.
 Y,d,tmux,Terminal multiplexer.
@@ -19,10 +19,10 @@ Y,d,i3-gaps,[i3wm] i3wm with gaps as window manager.
 Y,d,i3blocks,[i3wm] i3wm status bar.
 Y,d,i3lock,[i3wm] The screen lock.user interface.
 Y,d,ffmpeg,[tool] software suite of libraries and programs for handling video audio and other multimedia files and streams.
-Y,g,/LukeSmithxyz/st.git,[X11] Simple terminal implementation for X.
+Y,g,LukeSmithxyz/st.git,[X11] Simple terminal implementation for X.
 Y,d,chromium,[tool] Browser.
 N,d,firefox,[tool] Browser.
 N,d,virtualbox-guest-utils,[VBox] Guest utilities for Virtual Box.
-Y,d,ttf-dejavou,[rice] Font.
+Y,d,ttf-dejavu,[rice] Font.
 Y,d,ttf-liberation,[rice] Font.
 Y,d,screenfetch,[rice] Bash script that displays system information alongside the ASCII distribution logo.

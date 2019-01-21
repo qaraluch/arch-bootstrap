@@ -32,7 +32,7 @@ main() {
     execCmd_showAppList
     _echoDone
   elif _isStringEqual "$cmd" "run" ; then
-    echo run setup
+    execCmd_run
     _echoDone
   fi
   # _switchYN $p_exec_down_chroot && execDownloadChroot
@@ -52,6 +52,11 @@ parseCommand() {
     do
     command="$1"
     case $command in
+        run)
+        cmd="$command"
+        shift
+        break
+        ;;
         show)
         cmd="$command"
         shift
@@ -136,6 +141,61 @@ showAppList() {
   | sed -e "1d" \
   | awk -F "\"*,\"*" '{printf " - \033[1;33m%-35s\033[0m - %s\n",$3,$4}'
 }
+
+# Command run:
+execCmd_run() {
+  updateSystem
+  installApps
+  updateSystem
+}
+
+updateSystem() {
+  _echoIt "${_pDel}" "About to update the system..."
+  pacman -Syu --noconfirm
+}
+
+installApps() {
+  _echoIt "${_pDel}" "About to install apps..."
+  local appListYesOnly="$(getAppListYesOnly)"
+  showAppList
+  _yesConfirmOrAbort "Continue or abort and edit installation list"
+  readAndInstallAppList
+  cd "${tempDir}"
+  _echoIt "${_pDel}" "${_cg}Installed all apps!${_ce}" "${_it}"
+}
+
+readAndInstallAppList() {
+  while IFS=, read -r switch repo name purpose ; do
+    n=$((n+1)) # omit title row
+    case "$repo" in
+      "d") install_default "$name" ;;
+      "g") install_gitAndMake "$name" ;;
+      "a") install_AUR "$name" ;;
+    esac
+  [[ $? ]] && _echoIt "${_pDel}" "Installed app: ${_cg}"${name}"${_ce}" "${_it}"
+  done <<< "${appListYesOnly}"
+}
+
+install_default() {
+  local name="$1"
+	pacman --noconfirm --needed -S "$1"
+}
+
+install_gitAndMake() {
+  local name="$1"
+  local dir=$(mktemp -d)
+	git clone --depth 1 "https://github.com/${name}" "$dir"
+	cd "$dir" || exit
+	make
+	make install
+	cd /tmp || return
+}
+
+#TODO: implement AUR install
+# install_AUR() { \
+#   echo "$aurinstalled" | grep "^$1$" >/dev/null 2>&1 && return
+#   sudo -u "$name" $aurhelper -S --noconfirm "$1" >/dev/null 2>&1
+# }
 
 # #------
   # local appNames=( "$( cut -d , -f3 <<< "${appListYesOnly}")" )

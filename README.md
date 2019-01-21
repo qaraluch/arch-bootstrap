@@ -94,7 +94,7 @@ curl https://raw.githubusercontent.com/qaraluch/arch-bootstrap/master/qalacs.sh 
 Launch the script with:
 
 ```
-chmod u+s qalacs.sh
+chmod u+x qalacs.sh
 ./qalacs.sh download      # download app list
 ./qalacs.sh show	  # show app list
 ./qalacs.sh run           # run script
