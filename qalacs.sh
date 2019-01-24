@@ -146,6 +146,7 @@ showAppList() {
 # Command run:
 execCmd_run() {
   updateSystem
+  refreshKeyRing
   installApps
   updateSystem
   addRootPassword
@@ -156,6 +157,11 @@ execCmd_run() {
 updateSystem() {
   _echoIt "${_pDel}" "About to update the system..."
   pacman -Syu --noconfirm
+}
+
+refreshKeyRing() {
+	pacman --noconfirm -Sy archlinux-keyring >/dev/null 2>&1
+  _echoIt "${_pDel}" "Refreshed Arch keyring" "${_it}"
 }
 
 # Install apps
