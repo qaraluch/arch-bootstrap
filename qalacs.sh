@@ -11,12 +11,15 @@ readonly _pName=$(basename $0)
 ########################## INSTALLATION PARAMS ##############################################################
 # edit it before run!
 readonly p_app_list='https://raw.githubusercontent.com/qaraluch/arch-bootstrap/master/qalacs-app-list.csv'
+readonly p_qyadr_deploy='https://raw.githubusercontent.com/qaraluch/qyadr/master/deploy.sh'
 readonly p_exec_install_apps='Y'
 readonly p_exec_setup_basic='Y'
+readonly p_exec_install_qyadr='Y'
 #############################################################################################################
 
 readonly tempDir='/tmp/qalacs'
 readonly localAppListName='qalacs-app-list.csv'
+readonly qyadrDeploy='.qyadr-deploy.sh'
 
 # Calculated vars
 readonly appListDownloadPath="${tempDir}/${localAppListName}"
@@ -40,16 +43,12 @@ main() {
     _switchYN $p_exec_install_apps && execCmd_run_installApps
     _switchYN $p_exec_install_apps || _echoIt "${_pDel}" "Skipped app installation" "$_ic"
 
+    _switchYN $p_exec_install_qyadr && execCmd_run_installQyadr
+    _switchYN $p_exec_install_qyadr || _echoIt "${_pDel}" "Skipped qyadr dotfiles installation" "$_ic"
+
     execCmd_run_FinalTweak
     _echoDone
   fi
-
-  # _switchYN $p_exec_chroot && execChrootWelcomeMsg
-  # _switchYN $p_exec_chroot && execChroot
-  # _switchYN $p_exec_chroot || _echoIt "${_pDel}" "Skipped run of chroot script" "$_ic"
-
-  # _echoIt "${_pDel}" "ALL DONE!" "$_it"
-  # execReboot
 }
 
 # CLI
@@ -93,9 +92,10 @@ welcomeMsg() {
   _echoIt "${_pDel}" "Welcome to: ${_cy}Qaraluch's Arch Linux Auto Config Script${_ce} (QALACS)"
   _echoIt "${_pDel}" "Used variables:"
   _echoIt "${_pDel}" "  - app list to download:        $p_app_list"
-  _echoIt "${_pDel}" "Execution subscript flags:"
-  _echoIt "${_pDel}" "  - run install apps    [Y]es/[N]o:       $p_exec_install_apps"
-  _echoIt "${_pDel}" "  - run basic setup     [Y]es/[N]o:       $p_exec_setup_basic"
+  _echoIt "${_pDel}" "Subscript execution flags:"
+  _echoIt "${_pDel}" "  - run install apps    [Y]es/[N]o:       ${_cy}${p_exec_install_apps}${_ce}"
+  _echoIt "${_pDel}" "  - run basic setup     [Y]es/[N]o:       ${_cy}${p_exec_setup_basic}${_ce}"
+  _echoIt "${_pDel}" "  - run install qyadr   [Y]es/[N]o:       ${_cy}${p_exec_install_qyadr}${_ce}"
   _echoIt "${_pDel}" "Check above installation settings." "$_iw"
 }
 
@@ -222,6 +222,7 @@ install_gitAndMake() {
 #   sudo -u "$name" $aurhelper -S --noconfirm "$1" >/dev/null 2>&1
 # }
 
+# Basic setup
 execCmd_run_setupBasic() {
   addRootPassword
   addUser
@@ -243,9 +244,13 @@ setupRootPass() {
 
 addUser() {
   _echoIt "${_pDel}" "It's time to add new user..."
-  userName=$(_readUserInput 'Enter user name')
+  getUserName
   inputPassAndCheck
   setupUser
+}
+
+getUserName() {
+  userName=$(_readUserInput 'Enter user name')
 }
 
 inputPassAndCheck() {
@@ -279,6 +284,28 @@ chSudo(){
   local configFile="/etc/sudoers"
 	sed -i "/#QALACS/d" "${configFile}"
 	echo "$* #QALACS" >> "${configFile}"
+}
+
+# Qyadr install
+execCmd_run_installQyadr() {
+  _echoIt "${_pDel}" "About to install qyadr dotfiles..."
+  # when run alone it need userName
+  _isStringEmpty "${userName}" && getUserName
+  downloadDeployScript
+  installQyadr
+}
+
+downloadDeployScript() {
+  _echoIt "$_pDel" " ... download deploy script..."
+  local source="${p_qyadr_deploy}"
+  local destination="/home/${userName}/${qyadrDeploy}"
+  curlFile
+}
+
+installQyadr() {
+  su - "${userName}" -c "bash /home/${userName}/.qyadr-deploy.sh"
+  su - "${userName}" -c "/home/${userName}/.qyadr-install.sh install"
+  _echoIt "${_pDel}" "Installed dotfiles (qyadr)" "${_iw}"
 }
 
 # Final touch

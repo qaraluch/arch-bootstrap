@@ -5,6 +5,7 @@ Y,d,base-devel,[basic] Basic package including tools needed for building compili
 Y,d,rsync,[basic] Utility for efficiently transferring and synchronizing files across computer systems.
 Y,d,tree,[basic] Shows directory tree structure.
 Y,d,mlocate,[basic] Finds files by name.
+Y,d,stow,[dotfiles] Required by qyadr dotfiles.
 Y,d,fzf,[dotfiles] A command-line fuzzy finder.
 Y,d,zsh,[dotfiles] Extended Bourne shell with a large number of improvements.
 Y,d,tmux,Terminal multiplexer.
