@@ -11,7 +11,8 @@ readonly _pName=$(basename $0)
 ########################## INSTALLATION PARAMS ##############################################################
 # edit it before run!
 readonly p_app_list='https://raw.githubusercontent.com/qaraluch/arch-bootstrap/master/qalacs-app-list.csv'
-readonly p_exec_part_XXX='Y'
+readonly p_exec_install_apps='Y'
+readonly p_exec_setup_basic='Y'
 #############################################################################################################
 
 readonly tempDir='/tmp/qalacs'
@@ -33,11 +34,15 @@ main() {
     execCmd_showAppList
     _echoDone
   elif _isStringEqual "$cmd" "run" ; then
-    execCmd_run
+    _switchYN $p_exec_setup_basic && execCmd_run_setupBasic # setup also root passwd
+    _switchYN $p_exec_setup_basic || _echoIt "${_pDel}" "Skipped basic setup" "$_ic"
+
+    _switchYN $p_exec_install_apps && execCmd_run_installApps
+    _switchYN $p_exec_install_apps || _echoIt "${_pDel}" "Skipped app installation" "$_ic"
+
+    execCmd_run_FinalTweak
     _echoDone
   fi
-  # _switchYN $p_exec_down_chroot && execDownloadChroot
-  # _switchYN $p_exec_down_chroot || _echoIt "${_pDel}" "Skipped downloading of chroot script" "$_ic"
 
   # _switchYN $p_exec_chroot && execChrootWelcomeMsg
   # _switchYN $p_exec_chroot && execChroot
@@ -89,7 +94,8 @@ welcomeMsg() {
   _echoIt "${_pDel}" "Used variables:"
   _echoIt "${_pDel}" "  - app list to download:        $p_app_list"
   _echoIt "${_pDel}" "Execution subscript flags:"
-  _echoIt "${_pDel}" "  - run XXX    [Y]es/[N]o:       $p_exec_part_XXX"
+  _echoIt "${_pDel}" "  - run install apps    [Y]es/[N]o:       $p_exec_install_apps"
+  _echoIt "${_pDel}" "  - run basic setup     [Y]es/[N]o:       $p_exec_setup_basic"
   _echoIt "${_pDel}" "Check above installation settings." "$_iw"
 }
 
@@ -144,9 +150,10 @@ showAppList() {
 }
 
 # Command run:
-execCmd_run() {
+execCmd_run_installApps() {
   updateSystem
   refreshKeyRing
+  configurePacman
   installApps
   updateSystem
   addRootPassword
@@ -162,6 +169,13 @@ updateSystem() {
 refreshKeyRing() {
 	pacman --noconfirm -Sy archlinux-keyring >/dev/null 2>&1
   _echoIt "${_pDel}" "Refreshed Arch keyring" "${_it}"
+}
+
+configurePacman() {
+  local configFile="/etc/packman.conf"
+  sed -i "s/^#Color/Color/g" "${configFile}"
+  sed -i "/\[multilib\]/,/Include/"'s/^#//' "${configFile}"
+  _echoIt "${_pDel}" "Updated pacman config file" "${_it}"
 }
 
 # Install apps
@@ -208,9 +222,13 @@ install_gitAndMake() {
 #   sudo -u "$name" $aurhelper -S --noconfirm "$1" >/dev/null 2>&1
 # }
 
+execCmd_run_setupBasic() {
+  addRootPassword
+  addUser
+  setupSudoTemporary
+}
+
 # Add user
-# TODO: if works add to tips
-# [Recursive function in bash - Stack Overflow](https://stackoverflow.com/questions/9682524/recursive-function-in-bash)
 addRootPassword() {
   _echoIt "${_pDel}" "Add root password"
   inputPassAndCheck
@@ -249,6 +267,28 @@ setupUser() {
 	echo "$userName:$passwd1" | chpasswd
 	unset passwd1 passwd2
   _echoIt "${_pDel}" "User: ${_cy}${userName}${_ce} set up." "${_it}"
+}
+
+# Sudo
+setupSudoTemporary() {
+  chSudo "%wheel ALL=(ALL) NOPASSWD: ALL"
+  _echoIt "${_pDel}" "Changed temporarily sudo config file" "${_iw}"
+}
+
+chSudo(){
+  local configFile="/etc/sudoers"
+	sed -i "/#QALACS/d" "${configFile}"
+	echo "$* #QALACS" >> "${configFile}"
+}
+
+# Final touch
+execCmd_run_FinalTweak(){
+  setupSudoFinal
+}
+
+setupSudoFinal() {
+  chSudo "%wheel ALL=(ALL) ALL"
+  _echoIt "${_pDel}" "Changed final sudo config file" "${_iw}"
 }
 
 # Utils
