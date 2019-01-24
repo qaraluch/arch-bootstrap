@@ -16,6 +16,7 @@ readonly p_exec_part_XXX='Y'
 
 readonly tempDir='/tmp/qalacs'
 readonly localAppListName='qalacs-app-list.csv'
+
 # Calculated vars
 readonly appListDownloadPath="${tempDir}/${localAppListName}"
 
@@ -147,13 +148,17 @@ execCmd_run() {
   updateSystem
   installApps
   updateSystem
+  addRootPassword
+  addUser
 }
 
+# Update system
 updateSystem() {
   _echoIt "${_pDel}" "About to update the system..."
   pacman -Syu --noconfirm
 }
 
+# Install apps
 installApps() {
   _echoIt "${_pDel}" "About to install apps..."
   local appListYesOnly="$(getAppListYesOnly)"
@@ -197,15 +202,48 @@ install_gitAndMake() {
 #   sudo -u "$name" $aurhelper -S --noconfirm "$1" >/dev/null 2>&1
 # }
 
-# #------
-  # local appNames=( "$( cut -d , -f3 <<< "${appListYesOnly}")" )
-  # local appDescriptions=( "$( cut -d , -f4- <<< "${appListYesOnly}")" )
-# execPartitionMgmt() {
-#   updateSystemClock
-#   _yesConfirmOrAbort
-#   _pressAnyKey
-#   _echoIt "${_pDel}" "Partitions are set up."
-# }
+# Add user
+# TODO: if works add to tips
+# [Recursive function in bash - Stack Overflow](https://stackoverflow.com/questions/9682524/recursive-function-in-bash)
+addRootPassword() {
+  _echoIt "${_pDel}" "Add root password"
+  inputPassAndCheck
+  setupRootPass
+}
+
+setupRootPass() {
+	echo "root:$passwd1" | chpasswd
+	unset passwd1 passwd2
+  _echoIt "${_pDel}" "Root password set up" "${_it}"
+}
+
+addUser() {
+  _echoIt "${_pDel}" "It's time to add new user..."
+  userName=$(_readUserInput 'Enter user name')
+  inputPassAndCheck
+  setupUser
+}
+
+inputPassAndCheck() {
+  typeInPass
+  while ! _isStringEqual "${passwd1}" "${passwd2}" ; do
+    _echoIt "${_pDel}" "Passwords do not match..." "${_iw}"
+    inputPassAndCheck
+  done
+}
+
+typeInPass() {
+  passwd1=$(_readUserInputSilent 'Enter password')
+  passwd2=$(_readUserInputSilent 'Retype password')
+}
+
+setupUser() {
+  groupadd "${userName}"
+	useradd -m -g "${userName}" -s /bin/zsh "$userName" >/dev/null 2>&1
+	echo "$userName:$passwd1" | chpasswd
+	unset passwd1 passwd2
+  _echoIt "${_pDel}" "User: ${_cy}${userName}${_ce} set up." "${_it}"
+}
 
 # Utils
 readonly _pDel='[ QALACS ]'
@@ -278,6 +316,20 @@ _isStringEqual(){
 _isDir() {
   local dir=$1
   [[ -d $dir ]]
+}
+
+_readUserInput() {
+  local msg=${1:-'Enter here'}
+  read -r -p "${_pDel}${_ia} ${msg} ${_cb}>${_ce} "
+  echo >&2
+  echo ${REPLY}
+}
+
+_readUserInputSilent() {
+  local msg=${1:-'Enter here'}
+  read -r -s -p "${_pDel}${_ia} ${msg} ${_cb}>${_ce} "
+  echo >&2
+  echo ${REPLY}
 }
 
 # Main run!
