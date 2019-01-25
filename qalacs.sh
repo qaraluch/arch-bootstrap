@@ -157,6 +157,7 @@ showAppList() {
 
 # Command run:
 execCmd_run_installApps() {
+  _isStringEmpty "${userName}" && getUserName # for su in case of standalone run
   enableMoreCoresForCompilation
   updateSystem
   refreshKeyRing
@@ -189,11 +190,12 @@ configurePacman() {
   local configFile="/etc/pacman.conf"
   sed -i "s/^#Color/Color/g" "${configFile}"
   sed -i "/\[multilib\]/,/Include/"'s/^#//' "${configFile}"
+  updateSystem # need this cos rise error with multilib
   _echoIt "${_pDel}" "Updated pacman config file" "${_it}"
 }
 
 installGit() {
-  loacal appName='git'
+  local appName='git'
   install_default "${appName}"
   [[ $? ]] && _echoIt "${_pDel}" "Installed app: ${_cg}"${appName}"${_ce}" "${_it}"
 }
@@ -205,7 +207,7 @@ installAURHelper() {
   _isDir "${helper}" && rm -rf "${helper}"
   git clone --depth 1 "https://aur.archlinux.org/${helper}.git"
   cd "${helper}"
-  makepkg -si
+  su - ${userName} -c "makepkg -si"
   [[ $? ]] && _echoIt "${_pDel}" "Installed AUR helper: ${_cg}"${helper}"${_ce}" "${_it}"
   cd /tmp
 }
@@ -262,7 +264,7 @@ execCmd_run_setupBasic() {
 
 # Add user
 addRootPassword() {
-  _echoIt "${_pDel}" "Add root password"
+  _echoIt "${_pDel}" "Add ${_cr}root${_ce} password"
   inputPassAndCheck
   setupRootPass
 }
@@ -274,7 +276,7 @@ setupRootPass() {
 }
 
 addUser() {
-  _echoIt "${_pDel}" "It's time to add new user..."
+  _echoIt "${_pDel}" "It's time to add new ${_cg}user${_ce}..."
   getUserName
   inputPassAndCheck
   setupUser
