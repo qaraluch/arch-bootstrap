@@ -44,6 +44,9 @@ main() {
     _switchYN $p_exec_install_apps && execCmd_run_installApps
     _switchYN $p_exec_install_apps || _echoIt "${_pDel}" "Skipped app installation" "$_ic"
 
+    _switchYN $p_exec_VBox_utils && execCmd_run_installVboxUtils
+    _switchYN $p_exec_VBox_utils || _echoIt "${_pDel}" "Skipped Virtual Box utils installation" "$_ic"
+
     _switchYN $p_exec_install_qyadr && execCmd_run_installQyadr
     _switchYN $p_exec_install_qyadr || _echoIt "${_pDel}" "Skipped qyadr dotfiles installation" "$_ic"
 
@@ -94,9 +97,10 @@ welcomeMsg() {
   _echoIt "${_pDel}" "Used variables:"
   _echoIt "${_pDel}" "  - app list to download:        $p_app_list"
   _echoIt "${_pDel}" "Subscript execution flags:"
-  _echoIt "${_pDel}" "  - run install apps    [Y]es/[N]o:       ${_cy}${p_exec_install_apps}${_ce}"
-  _echoIt "${_pDel}" "  - run basic setup     [Y]es/[N]o:       ${_cy}${p_exec_setup_basic}${_ce}"
-  _echoIt "${_pDel}" "  - run install qyadr   [Y]es/[N]o:       ${_cy}${p_exec_install_qyadr}${_ce}"
+  _echoIt "${_pDel}" "  - run install apps        [Y]es/[N]o:       ${_cy}${p_exec_install_apps}${_ce}"
+  _echoIt "${_pDel}" "  - run basic setup         [Y]es/[N]o:       ${_cy}${p_exec_setup_basic}${_ce}"
+  _echoIt "${_pDel}" "  - run install qyadr       [Y]es/[N]o:       ${_cy}${p_exec_install_qyadr}${_ce}"
+  _echoIt "${_pDel}" "  - run VBox utils install  [Y]es/[N]o:       ${_cy}${p_exec_VBox_utils}${_ce}"
   _echoIt "${_pDel}" "Check above installation settings." "$_iw"
 }
 
@@ -291,6 +295,17 @@ chSudo(){
   local configFile="/etc/sudoers"
 	sed -i "/#QALACS/d" "${configFile}"
 	echo "$* #QALACS" >> "${configFile}"
+}
+
+# VBox utils installation
+execCmd_run_installVboxUtils(){
+  _echoIt "${_pDel}" "About to install qyadr dotfiles..."
+  setupVBox
+}
+
+setupVBox() {
+  install_default 'virtualbox-guest-utils'
+  servicesInit 'vboxservice.service'
 }
 
 # Qyadr install
