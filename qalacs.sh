@@ -151,6 +151,7 @@ showAppList() {
 
 # Command run:
 execCmd_run_installApps() {
+  enableMoreCoresForCompilation
   updateSystem
   refreshKeyRing
   configurePacman
@@ -161,6 +162,13 @@ execCmd_run_installApps() {
 }
 
 # Update system
+enableMoreCoresForCompilation() {
+  local configFile='/etc/makepkg.conf'
+  local coreNr=$(nproc)
+  sed -i "s/-j2/-j${coreNr}/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
+  _echoIt "${_pDel}" "Enabled ${_cy}${coreNr}${_ce} cores for compilation"
+}
+
 updateSystem() {
   _echoIt "${_pDel}" "About to update the system..."
   pacman -Syu --noconfirm
