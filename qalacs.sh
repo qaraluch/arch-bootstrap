@@ -15,6 +15,7 @@ readonly p_qyadr_deploy='https://raw.githubusercontent.com/qaraluch/qyadr/master
 readonly p_exec_install_apps='Y'
 readonly p_exec_setup_basic='Y'
 readonly p_exec_install_qyadr='Y'
+readonly p_exec_VBox_utils='Y'
 #############################################################################################################
 
 readonly tempDir='/tmp/qalacs'
@@ -157,8 +158,6 @@ execCmd_run_installApps() {
   configurePacman
   installApps
   updateSystem
-  addRootPassword
-  addUser
 }
 
 # Update system
@@ -319,6 +318,7 @@ installQyadr() {
 # Final touch
 execCmd_run_FinalTweak(){
   servicesInit  cronie
+  installVimPlugins
   setupSudoFinal
 }
 
@@ -333,6 +333,10 @@ servicesInit() {
     systemctl start "$service"
     _echoIt "${_pDel}" "Enabled and started service: ${_cg}${service}${_ce}" "${_iw}"
   done ;}
+
+installVimPlugins() {
+  (sleep 30 && killall nvim) & su - "$userName" -c "nvim -E -c \"PlugUpdate|visual|q|q\""
+}
 
 # Utils
 readonly _pDel='[ QALACS ]'
