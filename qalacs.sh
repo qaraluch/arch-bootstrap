@@ -205,9 +205,10 @@ installAURHelper() {
   _echoIt "${_pDel}" "About to install AUR helper: ${_cy}${helper}${_ce}..."
   cd /tmp
   _isDir "${helper}" && rm -rf "${helper}"
-  git clone --depth 1 "https://aur.archlinux.org/${helper}.git"
+  git clone "https://aur.archlinux.org/${helper}.git"
   cd "${helper}"
-  su - ${userName} -c "makepkg -si"
+  sudo -u ${userName} makepkg -si
+  # su - ${userName} -c "makepkg -si"
   [[ $? ]] && _echoIt "${_pDel}" "Installed AUR helper: ${_cg}"${helper}"${_ce}" "${_it}"
   cd /tmp
 }
