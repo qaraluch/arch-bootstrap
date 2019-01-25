@@ -12,6 +12,7 @@ readonly _pName=$(basename $0)
 # edit it before run!
 readonly p_app_list='https://raw.githubusercontent.com/qaraluch/arch-bootstrap/master/qalacs-app-list.csv'
 readonly p_qyadr_deploy='https://raw.githubusercontent.com/qaraluch/qyadr/master/deploy.sh'
+readonly p_AUR_helper='yay'
 readonly p_exec_install_apps='Y'
 readonly p_exec_setup_basic='Y'
 readonly p_exec_install_qyadr='Y'
@@ -160,6 +161,7 @@ execCmd_run_installApps() {
   updateSystem
   refreshKeyRing
   configurePacman
+  installAURHelper
   installApps
   updateSystem
 }
@@ -187,6 +189,18 @@ configurePacman() {
   sed -i "s/^#Color/Color/g" "${configFile}"
   sed -i "/\[multilib\]/,/Include/"'s/^#//' "${configFile}"
   _echoIt "${_pDel}" "Updated pacman config file" "${_it}"
+}
+
+installAURHelper() {
+  local helper="${p_AUR_helper}"
+  _echoIt "${_pDel}" "About to install AUR helper: ${_cy}${helper}${_ce}..."
+  cd /tmp
+  _isDir "${helper}" && rm -rf "${helper}"
+  git clone --depth 1 "https://aur.archlinux.org/${helper}.git"
+  cd "${helper}"
+  makepkg -si
+  [[ $? ]] && _echoIt "${_pDel}" "Installed AUR helper: ${_cg}"${helper}"${_ce}" "${_it}"
+  cd /tmp
 }
 
 # Install apps
@@ -221,17 +235,16 @@ install_gitAndMake() {
   local name="$1"
   local dir=$(mktemp -d)
 	git clone --depth 1 "https://github.com/${name}" "$dir"
-	cd "$dir" || exit
+	cd "$dir"
 	make
 	make install
-	cd /tmp || return
+	cd /tmp
 }
 
-#TODO: implement AUR install
-# install_AUR() { \
-#   echo "$aurinstalled" | grep "^$1$" >/dev/null 2>&1 && return
-#   sudo -u "$name" $aurhelper -S --noconfirm "$1" >/dev/null 2>&1
-# }
+install_AUR() { \
+  local name="$1"
+  su - "$userName" -c "${p_AUR_helper} -S --noconfirm ${name}"
+}
 
 # Basic setup
 execCmd_run_setupBasic() {
@@ -301,6 +314,7 @@ chSudo(){
 execCmd_run_installVboxUtils(){
   _echoIt "${_pDel}" "About to install qyadr dotfiles..."
   setupVBox
+  [[ $? ]] && _echoDone
 }
 
 setupVBox() {
@@ -351,6 +365,7 @@ servicesInit() {
 
 installVimPlugins() {
   (sleep 30 && killall nvim) & su - "$userName" -c "nvim -E -c \"PlugUpdate|visual|q|q\""
+  [[ $? ]] && _echoIt "${_pDel}" "Installed nVim plugins" "${_it}"
 }
 
 # Utils
