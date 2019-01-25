@@ -161,6 +161,7 @@ execCmd_run_installApps() {
   updateSystem
   refreshKeyRing
   configurePacman
+  installGit
   installAURHelper
   installApps
   updateSystem
@@ -189,6 +190,12 @@ configurePacman() {
   sed -i "s/^#Color/Color/g" "${configFile}"
   sed -i "/\[multilib\]/,/Include/"'s/^#//' "${configFile}"
   _echoIt "${_pDel}" "Updated pacman config file" "${_it}"
+}
+
+installGit() {
+  loacal appName='git'
+  install_default "${appName}"
+  [[ $? ]] && _echoIt "${_pDel}" "Installed app: ${_cg}"${appName}"${_ce}" "${_it}"
 }
 
 installAURHelper() {
