@@ -301,7 +301,7 @@ typeInPass() {
 
 setupUser() {
   groupadd "${userName}"
-	useradd -m -g "${userName}" -s /bin/zsh "$userName" >/dev/null 2>&1
+	useradd -m -g "${userName}" -s /bin/bash "$userName" >/dev/null 2>&1
 	echo "$userName:$passwd1" | chpasswd
 	unset passwd1 passwd2
   _echoIt "${_pDel}" "User: ${_cy}${userName}${_ce} set up." "${_it}"
@@ -357,6 +357,7 @@ installQyadr() {
 execCmd_run_FinalTweak(){
   servicesInit  cronie
   installVimPlugins
+  changeShellZsh
   setupSudoFinal
 }
 
@@ -375,6 +376,11 @@ servicesInit() {
 installVimPlugins() {
   (sleep 30 && killall nvim) & su - "$userName" -c "nvim -E -c \"PlugUpdate|visual|q|q\""
   [[ $? ]] && _echoIt "${_pDel}" "Installed nVim plugins" "${_it}"
+}
+
+changeShellZsh() {
+  chsh --shell /bin/zsh ${userName}
+  [[ $? ]] && _echoIt "${_pDel}" "Changed shell to ${_cy}ZSH${_ce} for user: ${_cy}${userName}${_ce}" "${_it}"
 }
 
 # Utils
