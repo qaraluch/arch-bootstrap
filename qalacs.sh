@@ -310,6 +310,7 @@ installQyadr() {
 
 # Final touch
 execCmd_run_FinalTweak(){
+  servicesInit  cronie
   setupSudoFinal
 }
 
@@ -317,6 +318,13 @@ setupSudoFinal() {
   chSudo "%wheel ALL=(ALL) ALL"
   _echoIt "${_pDel}" "Changed final sudo config file" "${_iw}"
 }
+
+servicesInit() {
+  for service in "$@"; do
+    systemctl enable "$service"
+    systemctl start "$service"
+    _echoIt "${_pDel}" "Enabled and started service: ${_cg}${service}${_ce}" "${_iw}"
+  done ;}
 
 # Utils
 readonly _pDel='[ QALACS ]'
