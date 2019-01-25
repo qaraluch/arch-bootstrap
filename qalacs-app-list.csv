@@ -1,6 +1,6 @@
 SWITCH,REPO-TYPE,NAME,PURPOSE
-Y,d,vim,[basic] Default text editor.
-Y,d,git,[basic] Version-control system for tracking changes in computer files.
+Y,d,vim,[basic] Text editor.
+Y,d,neovim,[basic] Default text editor.
 Y,d,base-devel,[basic] Basic package including tools needed for building compiling and linking.
 Y,d,rsync,[basic] Utility for efficiently transferring and synchronizing files across computer systems.
 Y,d,tree,[basic] Shows directory tree structure.
