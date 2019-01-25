@@ -185,7 +185,7 @@ refreshKeyRing() {
 }
 
 configurePacman() {
-  local configFile="/etc/packman.conf"
+  local configFile="/etc/pacman.conf"
   sed -i "s/^#Color/Color/g" "${configFile}"
   sed -i "/\[multilib\]/,/Include/"'s/^#//' "${configFile}"
   _echoIt "${_pDel}" "Updated pacman config file" "${_it}"
