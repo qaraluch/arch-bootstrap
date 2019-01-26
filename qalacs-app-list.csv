@@ -23,7 +23,7 @@ Y,d,ffmpeg,[tool] software suite of libraries and programs for handling video au
 Y,g,LukeSmithxyz/st.git,[X11] Simple terminal implementation for X.
 Y,d,chromium,[tool] Browser.
 N,d,firefox,[tool] Browser.
-N,d,virtualbox-guest-utils,[VBox] Guest utilities for Virtual Box.
+Y,d,virtualbox-guest-utils,[VBox] Guest utilities for Virtual Box.
 Y,d,ttf-dejavu,[rice] Font.
 Y,d,ttf-liberation,[rice] Font.
 Y,d,screenfetch,[rice] Bash script that displays system information alongside the ASCII distribution logo.

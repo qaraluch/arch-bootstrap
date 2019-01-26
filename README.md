@@ -70,6 +70,14 @@ For more info read the source code :page_facing_up:.
 
 ## 2. QALACS
 
+Next scripts is Qaraluch's Arch Linux Auto Config Script (QALACS) witch set up a functional Arch Linux environment:
+
+- create user
+- install apps from app list
+- install AUR helper
+- install dotfiles ([qyadr](https://github.com/qaraluch/qyadr))
+- if nesesery initiate VirtualBox guest utilities
+
 ### Qalacs installation
 
 After Calis script installation create temp dir:
