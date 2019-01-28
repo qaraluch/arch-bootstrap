@@ -375,7 +375,7 @@ servicesInit() {
   done ;}
 
 installVimPlugins() {
-  (sleep 30 && killall nvim) & su - "$userName" -c "nvim -E -c \"PlugUpdate|visual|q|q\""
+  sudo -u "$userName" nvim -E -c "PlugUpdate|visual|q|q"
   [[ $? ]] && _echoIt "${_pDel}" "Installed nVim plugins" "${_it}"
 }
 
