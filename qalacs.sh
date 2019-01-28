@@ -204,12 +204,12 @@ installAURHelper() {
   local helper="${p_AUR_helper}"
   _echoIt "${_pDel}" "About to install AUR helper: ${_cy}${helper}${_ce}..."
   cd /tmp
-  _isDir "${helper}" && rm -rf "${helper}"
-  git clone "https://aur.archlinux.org/${helper}.git"
-  cd "${helper}"
-  sudo -u ${userName} makepkg -si
-  # su - ${userName} -c "makepkg -si"
-  [[ $? ]] && _echoIt "${_pDel}" "Installed AUR helper: ${_cg}"${helper}"${_ce}" "${_it}"
+	rm -rf /tmp/"${helper}"*
+	curl -sO https://aur.archlinux.org/cgit/aur.git/snapshot/"${helper}".tar.gz \
+    && sudo -u "${userName}" tar -xvf "${helper}".tar.gz \
+    && cd "${helper}" \
+    && sudo -u "${userName}" makepkg --noconfirm -si \
+    && [[ $? ]] && _echoIt "${_pDel}" "Installed AUR helper: ${_cg}"${helper}"${_ce}" "${_it}"
   cd /tmp
 }
 
@@ -302,7 +302,8 @@ typeInPass() {
 
 setupUser() {
   groupadd "${userName}"
-	useradd -m -g "${userName}" -s /bin/bash "$userName" >/dev/null 2>&1
+	useradd -m -g "${userName}" -s /bin/zsh "$userName"
+  usermod -a -G wheel "${userName}"
 	echo "$userName:$passwd1" | chpasswd
 	unset passwd1 passwd2
   _echoIt "${_pDel}" "User: ${_cy}${userName}${_ce} set up." "${_it}"
@@ -358,7 +359,6 @@ installQyadr() {
 execCmd_run_FinalTweak(){
   servicesInit  cronie
   installVimPlugins
-  changeShellZsh
   setupSudoFinal
 }
 
@@ -377,11 +377,6 @@ servicesInit() {
 installVimPlugins() {
   (sleep 30 && killall nvim) & su - "$userName" -c "nvim -E -c \"PlugUpdate|visual|q|q\""
   [[ $? ]] && _echoIt "${_pDel}" "Installed nVim plugins" "${_it}"
-}
-
-changeShellZsh() {
-  chsh --shell /bin/zsh ${userName}
-  [[ $? ]] && _echoIt "${_pDel}" "Changed shell to ${_cy}ZSH${_ce} for user: ${_cy}${userName}${_ce}" "${_it}"
 }
 
 # Utils
