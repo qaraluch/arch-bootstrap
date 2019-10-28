@@ -2,17 +2,18 @@
 # Author: qaraluch - 08.2018 - MIT
 # Part of the repo: arch-bootstrap
 # Custom Arch Linux Installation Script (CALIS)
-# Many thanks to LukeSmithXYZ for inspiration!
+# Updates:
+# - 2019-11-18 - UEFI device (NUC) and sydtemd-boot
 
 set -e
 
 ########################## INSTALLATION PARAMS ##############################################################
 # edit it before run!
-readonly p_hostname='arch-XXX'
+readonly p_hostname='arch-nuc-dev'
 readonly p_device='sda'
-readonly p_part_boot_size='250'
-readonly p_part_swap_size='2000'
-readonly p_part_root_size='10000'
+readonly p_part_boot_size='550'
+readonly p_part_swap_size='8000'
+readonly p_part_root_size='20000'
 readonly p_chroot_source='https://raw.githubusercontent.com/qaraluch/arch-bootstrap/master/calis-chroot.sh'
 readonly p_exec_part_mgmt='Y'
 readonly p_exec_install_arch='Y'
@@ -20,7 +21,6 @@ readonly p_exec_down_chroot='Y'
 readonly p_exec_chroot='Y'
 #############################################################################################################
 
-# Main
 main() {
   welcomeMsg
 
@@ -73,7 +73,6 @@ execPartitionMgmt() {
   updateSystemClock
   createPartitions
   showPartitionLayout
-  _yesConfirmOrAbort
   formatPartitionsAndMount
   _echoIt "${_pDel}" "Partitions are set up."
 }
@@ -85,9 +84,9 @@ updateSystemClock() {
 
 createPartitions() {
   _echoIt "${_pDel}" "About to create partitions..."
-  parted --script "${device_full}" -- mklabel msdos \
-    mkpart primary ext4 1Mib "${p_part_boot_size}MiB" \
-    set 1 boot on \
+  parted --script "${device_full}" -- mklabel gpt \
+    mkpart primary fat32 1Mib "${p_part_boot_size}MiB" \
+    set 1 esp on \
     mkpart primary linux-swap "${p_part_boot_size}MiB" "${part_swap_size_relative}MiB" \
     mkpart primary ext4 "${part_swap_size_relative}MiB" "${part_root_size_relative}MiB" \
     mkpart primary ext4 "${part_root_size_relative}MiB" 100%
@@ -96,6 +95,7 @@ createPartitions() {
 showPartitionLayout() {
   parted --script "${device_full}" -- print
   _echoIt "${_pDel}" "Created partitions." "$_it"
+  _yesConfirmOrAbort
 }
 
 formatPartitionsAndMount() {
@@ -105,7 +105,7 @@ formatPartitionsAndMount() {
   wipefs "${part_root}"
   wipefs "${part_home}"
   _echoIt "${_pDel}" "About to format partitions..."
-  mkfs.ext4 ${part_boot}
+  mkfs.vfat -F32 ${part_boot}
   mkfs.ext4 ${part_root}
   mkfs.ext4 ${part_home}
   mkswap ${part_swap}
@@ -128,7 +128,7 @@ execInstallArch() {
 }
 
 installArch() {
-  pacstrap /mnt base base-devel
+  pacstrap /mnt base base-devel intel-ucode linux linux-firmware vim man-pages
   _echoIt "${_pDel}" "Installed Arch." "$_it"
 }
 
@@ -137,6 +137,7 @@ generateFstabFile() {
   _echoIt "${_pDel}" "Generated fstab file." "$_it"
   _echoIt "${_pDel}" "See fstab file:"
   more /mnt/etc/fstab
+  _yesConfirmOrAbort
 }
 
 setupHostName() {
@@ -179,7 +180,7 @@ execChroot() {
 }
 
 runChroot() {
-  arch-chroot /mnt bash chroot.sh ${device_full} && rm /mnt/chroot.sh
+  arch-chroot /mnt /bin/bash chroot.sh && rm /mnt/chroot.sh
   _echoIt "${_pDel}" "Chroot script ended. Clean it up too." "$_it"
 }
 
@@ -197,7 +198,8 @@ rebootNow() {
   then
     umount -R /mnt
     swapoff ${part_swap}
-    shutdown -h now
+    reboot
+    # shutdown -h now
   fi
 }
 

@@ -3,19 +3,17 @@
 # Part of the repo: arch-bootstrap
 # Custom Arch Linux Installation Script (CALIS)
 # Chroot part
+# Updates:
+# - 2019-11-18 - UEFI device (NUC) and sydtemd-boot
 
-# Main
 main() {
-  local devicePath=$1
   _echoIt "${_pDel}" "Welcome to: Custom Arch Linux Installation Script (CALIS - CHROOT)"
-  _echoIt "${_pDel}" "Used variables from calis script:"
-  _echoIt "${_pDel}" "  - device:       $devicePath"
   _yesConfirmOrAbort "Ready to roll"
   setupLocale
   setupTimeZone
   setupKeyboard
-  installBootLoader $devicePath
   installNetworkManager
+  installBootLoader_systemd_boot
   _echoIt "${_pDel}" "DONE!" "$_it"
 }
 
@@ -42,14 +40,26 @@ EOT
   _echoIt "${_pDel}" "Setup keyboard layout." "$_it"
 }
 
-installBootLoader() {
-  local device=$1
-  _echoIt "${_pDel}" "Installing bootloader: GRUB on device: ${device}"
-  _pressAnyKey
-  pacman --noconfirm --needed -Syu grub \
-    && grub-install --target=i386-pc ${device} \
-    && grub-mkconfig -o /boot/grub/grub.cfg
-  _echoIt "${_pDel}" "Installed bootloader" "$_it"
+installBootLoader_systemd_boot() {
+  bootctl --path=/boot install
+  local loaderConf=/boot/loader/loader.conf
+  cat <<EOT > "${loaderConf}"
+default arch-*
+timeout 3
+editor no
+EOT
+  local archConf=/boot/loader/entries/arch.conf
+touch "${archConf}"
+  cat <<EOT >> "${archConf}"
+title   Arch Linux
+linux   /vmlinuz-linux
+initrd  /intel-ucode.img
+initrd  /initramfs-linux.img
+EOT
+echo "options root=UUID=$(blkid -s UUID -o value /dev/sda3) rw" >> "${archConf}"
+  cat "${loaderConf}"
+  cat "${archConf}"
+  _yesConfirmOrAbort
 }
 
 installNetworkManager() {

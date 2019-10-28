@@ -32,7 +32,7 @@ Script `calis-chroot.sh` performs following tasks in newly created Arch Linux sy
 - set up locale to US
 - configure timezone to Warsaw one
 - set up polish keyboard
-- installs GRUB bootloader
+- installs systemd-boot bootloader
 - installs NetworkManager
 
 There is possibility to reedit script file by aborting script and run it again by:
@@ -60,7 +60,8 @@ curl https://raw.githubusercontent.com/qaraluch/arch-bootstrap/master/calis.sh -
 And launch the script with:
 
 ```
-bash calis.sh
+chmod +x ./calis.sh
+./calis.sh
 ```
 
 then follow the on-screen instructions to completion.
@@ -76,7 +77,6 @@ Next scripts is Qaraluch's Arch Linux Auto Config Script (QALACS) witch set up a
 - install apps from app list
 - install AUR helper
 - install dotfiles ([qyadr](https://github.com/qaraluch/qyadr))
-- if nesesery initiate VirtualBox guest utilities
 
 ### Qalacs installation
 
