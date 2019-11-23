@@ -16,7 +16,7 @@ readonly p_AUR_helper='yay'
 readonly p_exec_install_apps='Y'
 readonly p_exec_setup_basic='Y'
 readonly p_exec_install_qyadr='Y'
-readonly p_exec_VBox_utils='Y'
+readonly p_exec_VBox_utils='N'
 #############################################################################################################
 
 readonly tempDir='/tmp/qalacs'
