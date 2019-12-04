@@ -22,7 +22,8 @@ Y,d,i3blocks,[i3wm] i3wm status bar.
 Y,d,i3lock,[i3wm] The screen lock.user interface.
 Y,d,ffmpeg,[tool] software suite of libraries and programs for handling video audio and other multimedia files and streams.
 Y,g,LukeSmithxyz/st.git,[X11] Simple terminal implementation for X.
-Y,d,chromium,[tool] Browser.
+Y,a,brave-bin,[tool] Browser.
+N,d,chromium,[tool] Browser.
 N,d,firefox,[tool] Browser.
 Y,d,virtualbox-guest-utils,[VBox] Guest utilities for Virtual Box.
 Y,d,ttf-dejavu,[rice] Font.
