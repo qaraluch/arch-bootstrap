@@ -17,6 +17,7 @@ Y,d,xorg-xinit,[X11] Program allows a user to manually start an Xorg display ser
 Y,d,xorg-xdpyinfo,[X11] Retrieves screen information for some scripts.
 Y,d,xorg-xwininfo,[X11] Allows querying information about windows.
 Y,d,xcompmgr,[X11] Utility for transparency and removing screen-tearing.
+Y,d,sxhkd,[X11] Simple X hotkey daemon.
 Y,d,i3-gaps,[i3wm] i3wm with gaps as window manager.
 Y,d,i3blocks,[i3wm] i3wm status bar.
 Y,d,i3lock,[i3wm] The screen lock.user interface.
@@ -25,7 +26,7 @@ Y,g,LukeSmithxyz/st.git,[X11] Simple terminal implementation for X.
 Y,a,brave-bin,[tool] Browser.
 N,d,chromium,[tool] Browser.
 N,d,firefox,[tool] Browser.
-Y,d,virtualbox-guest-utils,[VBox] Guest utilities for Virtual Box.
+N,d,virtualbox-guest-utils,[VBox] Guest utilities for Virtual Box.
 Y,d,ttf-dejavu,[rice] Font.
 Y,d,ttf-liberation,[rice] Font.
 Y,d,screenfetch,[rice] Bash script that displays system information alongside the ASCII distribution logo.
