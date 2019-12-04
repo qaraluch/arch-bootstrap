@@ -1,5 +1,4 @@
 SWITCH,REPO-TYPE,NAME,PURPOSE
-Y,d,vim,[basic] Text editor.
 Y,d,neovim,[basic] Default text editor.
 Y,d,base-devel,[basic] Basic package including tools needed for building compiling and linking.
 Y,d,cronie,[basic] Runs specified programs at scheduled times and related tools.
@@ -7,6 +6,7 @@ Y,d,rsync,[basic] Utility for efficiently transferring and synchronizing files a
 Y,d,tree,[basic] Shows directory tree structure.
 Y,d,mlocate,[basic] Finds files by name.
 Y,d,stow,[dotfiles] Required by qyadr dotfiles.
+Y,d,the_silver_searcher,[dotfiles] Required by qyadr dotfiles alias.
 Y,d,fzf,[dotfiles] A command-line fuzzy finder.
 Y,d,zsh,[dotfiles] Extended Bourne shell with a large number of improvements.
 Y,d,tmux,Terminal multiplexer.
