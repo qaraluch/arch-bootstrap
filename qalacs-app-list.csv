@@ -9,6 +9,7 @@ Y,d,stow,[dotfiles] Required by qyadr dotfiles.
 Y,d,the_silver_searcher,[dotfiles] Required by qyadr dotfiles alias.
 Y,d,fzf,[dotfiles] A command-line fuzzy finder.
 Y,d,zsh,[dotfiles] Extended Bourne shell with a large number of improvements.
+Y,d,moreutils,[dotfiles] utility ifne for fzf and nvim alias usage.
 Y,d,tmux,Terminal multiplexer.
 Y,d,xclip,[X11] Command line interface to the X11 clipboard.
 Y,d,feh,[X11] Fast and light image viewer.
