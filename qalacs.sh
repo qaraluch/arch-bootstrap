@@ -15,8 +15,7 @@ readonly p_qyadr_deploy='https://raw.githubusercontent.com/qaraluch/qyadr/master
 readonly p_AUR_helper='yay'
 readonly p_exec_install_apps='Y'
 readonly p_exec_setup_basic='Y'
-readonly p_exec_install_qyadr='Y'
-readonly p_exec_VBox_utils='N'
+readonly p_exec_install_qyadr='N'
 #############################################################################################################
 
 readonly tempDir='/tmp/qalacs'
@@ -44,9 +43,6 @@ main() {
 
     _switchYN $p_exec_install_apps && execCmd_run_installApps
     _switchYN $p_exec_install_apps || _echoIt "${_pDel}" "Skipped app installation" "$_ic"
-
-    _switchYN $p_exec_VBox_utils && execCmd_run_installVboxUtils
-    _switchYN $p_exec_VBox_utils || _echoIt "${_pDel}" "Skipped Virtual Box utils installation" "$_ic"
 
     _switchYN $p_exec_install_qyadr && execCmd_run_installQyadr
     _switchYN $p_exec_install_qyadr || _echoIt "${_pDel}" "Skipped qyadr dotfiles installation" "$_ic"
@@ -101,7 +97,6 @@ welcomeMsg() {
   _echoIt "${_pDel}" "  - run install apps        [Y]es/[N]o:       ${_cy}${p_exec_install_apps}${_ce}"
   _echoIt "${_pDel}" "  - run basic setup         [Y]es/[N]o:       ${_cy}${p_exec_setup_basic}${_ce}"
   _echoIt "${_pDel}" "  - run install qyadr       [Y]es/[N]o:       ${_cy}${p_exec_install_qyadr}${_ce}"
-  _echoIt "${_pDel}" "  - run VBox utils install  [Y]es/[N]o:       ${_cy}${p_exec_VBox_utils}${_ce}"
   _echoIt "${_pDel}" "Check above installation settings." "$_iw"
 }
 
@@ -321,18 +316,6 @@ chSudo(){
 	echo "$* #QALACS" >> "${configFile}"
 }
 
-# VBox utils installation
-execCmd_run_installVboxUtils(){
-  _echoIt "${_pDel}" "About to install qyadr dotfiles..."
-  setupVBox
-  [[ $? ]] && _echoDone
-}
-
-setupVBox() {
-  install_default 'virtualbox-guest-utils'
-  servicesInit 'vboxservice.service'
-}
-
 # Qyadr install
 execCmd_run_installQyadr() {
   _echoIt "${_pDel}" "About to install qyadr dotfiles..."
@@ -357,7 +340,7 @@ installQyadr() {
 
 # Final touch
 execCmd_run_FinalTweak(){
-  servicesInit  cronie
+  servicesInit cronie
   installVimPlugins
   setupSudoFinal
 }
