@@ -5,12 +5,11 @@ Y,d,cronie,[basic] Runs specified programs at scheduled times and related tools.
 Y,d,rsync,[basic] Utility for efficiently transferring and synchronizing files across computer systems.
 Y,d,tree,[basic] Shows directory tree structure.
 Y,d,mlocate,[basic] Finds files by name.
-Y,d,stow,[dotfiles] Required by qyadr dotfiles.
+Y,d,tmux,[basic] Terminal multiplexer.
 Y,d,the_silver_searcher,[dotfiles] Required by qyadr dotfiles alias.
 Y,d,fzf,[dotfiles] A command-line fuzzy finder.
 Y,d,zsh,[dotfiles] Extended Bourne shell with a large number of improvements.
 Y,d,moreutils,[dotfiles] utility ifne for fzf and nvim alias usage.
-Y,d,tmux,Terminal multiplexer.
 Y,d,xclip,[X11] Command line interface to the X11 clipboard.
 Y,d,feh,[X11] Fast and light image viewer.
 Y,d,xorg-server,[X11] Display server for the X Window.
@@ -19,15 +18,11 @@ Y,d,xorg-xdpyinfo,[X11] Retrieves screen information for some scripts.
 Y,d,xorg-xwininfo,[X11] Allows querying information about windows.
 Y,d,xcompmgr,[X11] Utility for transparency and removing screen-tearing.
 Y,d,sxhkd,[X11] Simple X hotkey daemon.
-Y,d,i3-gaps,[i3wm] i3wm with gaps as window manager.
-Y,d,i3blocks,[i3wm] i3wm status bar.
-Y,d,i3lock,[i3wm] The screen lock.user interface.
-Y,d,ffmpeg,[tool] software suite of libraries and programs for handling video audio and other multimedia files and streams.
 Y,g,LukeSmithxyz/st.git,[X11] Simple terminal implementation for X.
+Y,d,ffmpeg,[tool] software suite of libraries and programs for handling video audio and other multimedia files and streams.
 Y,a,brave-bin,[tool] Browser.
 N,d,chromium,[tool] Browser.
 N,d,firefox,[tool] Browser.
-N,d,virtualbox-guest-utils,[VBox] Guest utilities for Virtual Box.
 Y,d,ttf-dejavu,[rice] Font.
 Y,d,ttf-liberation,[rice] Font.
 Y,d,screenfetch,[rice] Bash script that displays system information alongside the ASCII distribution logo.
