@@ -84,7 +84,7 @@ After Calis script installation create temp dir:
 
 ```
 mkdir /tmp/qalacs
-cd !*
+cd /tmp/qalacs
 ```
 
 And download the script:
