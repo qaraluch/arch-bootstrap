@@ -1,30 +1,10 @@
 SWITCH,REPO-TYPE,NAME,PURPOSE
-Y,d,neovim,[basic] Default text editor.
-Y,d,base-devel,[basic] Basic package including tools needed for building compiling and linking.
+Y,d,base-devel,[core] Basic package including tools needed for building compiling and linking.
+Y,d,neovim,[editor] Default text editor.
+Y,d,zsh,[basic] Extended Bourne shell with a large number of improvements.
+Y,d,tmux,[basic] Terminal multiplexer.
 Y,d,cronie,[basic] Runs specified programs at scheduled times and related tools.
 Y,d,rsync,[basic] Utility for efficiently transferring and synchronizing files across computer systems.
 Y,d,tree,[basic] Shows directory tree structure.
 Y,d,mlocate,[basic] Finds files by name.
-Y,d,tmux,[basic] Terminal multiplexer.
-Y,d,the_silver_searcher,[dotfiles] Required by qyadr dotfiles alias.
-Y,d,fzf,[dotfiles] A command-line fuzzy finder.
-Y,d,zsh,[dotfiles] Extended Bourne shell with a large number of improvements.
-Y,d,moreutils,[dotfiles] utility ifne for fzf and nvim alias usage.
-Y,d,xclip,[X11] Command line interface to the X11 clipboard.
-Y,d,feh,[X11] Fast and light image viewer.
-Y,d,xorg-server,[X11] Display server for the X Window.
-Y,d,xorg-xinit,[X11] Program allows a user to manually start an Xorg display server.
-Y,d,xorg-xdpyinfo,[X11] Retrieves screen information for some scripts.
-Y,d,xorg-xwininfo,[X11] Allows querying information about windows.
-Y,d,xcompmgr,[X11] Utility for transparency and removing screen-tearing.
-Y,d,sxhkd,[X11] Simple X hotkey daemon.
-Y,d,libx11,[X11] Dependency for st compilation.
-Y,d,libxft,[X11] Dependency for st compilation.
-Y,g,LukeSmithxyz/st.git,[X11] Simple terminal implementation for X.
-Y,d,ffmpeg,[tool] software suite of libraries and programs for handling video audio and other multimedia files and streams.
-Y,a,brave-bin,[tool] Browser.
-N,d,chromium,[tool] Browser.
-N,d,firefox,[tool] Browser.
-Y,d,ttf-dejavu,[rice] Font.
-Y,d,ttf-liberation,[rice] Font.
-Y,d,screenfetch,[rice] Bash script that displays system information alongside the ASCII distribution logo.
+Y,d,chezmoi,[dotfiles] Dotfiles manager.

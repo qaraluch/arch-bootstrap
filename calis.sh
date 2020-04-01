@@ -128,7 +128,7 @@ execInstallArch() {
 }
 
 installArch() {
-  pacstrap /mnt base base-devel intel-ucode linux linux-firmware vim man-pages
+  pacstrap /mnt base base-devel intel-ucode linux linux-firmware neovim man-pages
   _echoIt "${_pDel}" "Installed Arch." "$_it"
 }
 

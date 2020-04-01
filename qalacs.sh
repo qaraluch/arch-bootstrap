@@ -11,16 +11,13 @@ readonly _pName=$(basename $0)
 ########################## INSTALLATION PARAMS ##############################################################
 # edit it before run!
 readonly p_app_list='https://raw.githubusercontent.com/qaraluch/arch-bootstrap/master/qalacs-app-list.csv'
-readonly p_qyadr_deploy='https://raw.githubusercontent.com/qaraluch/qyadr/master/deploy.sh'
 readonly p_AUR_helper='yay'
 readonly p_exec_install_apps='Y'
 readonly p_exec_setup_basic='Y'
-readonly p_exec_install_qyadr='N'
 #############################################################################################################
 
 readonly tempDir='/tmp/qalacs'
 readonly localAppListName='qalacs-app-list.csv'
-readonly qyadrDeploy='.qyadr-deploy.sh'
 
 # Calculated vars
 readonly appListDownloadPath="${tempDir}/${localAppListName}"
@@ -43,9 +40,6 @@ main() {
 
     _switchYN $p_exec_install_apps && execCmd_run_installApps
     _switchYN $p_exec_install_apps || _echoIt "${_pDel}" "Skipped app installation" "$_ic"
-
-    _switchYN $p_exec_install_qyadr && execCmd_run_installQyadr
-    _switchYN $p_exec_install_qyadr || _echoIt "${_pDel}" "Skipped qyadr dotfiles installation" "$_ic"
 
     execCmd_run_FinalTweak
     _echoDone
@@ -96,7 +90,6 @@ welcomeMsg() {
   _echoIt "${_pDel}" "Subscript execution flags:"
   _echoIt "${_pDel}" "  - run install apps        [Y]es/[N]o:       ${_cy}${p_exec_install_apps}${_ce}"
   _echoIt "${_pDel}" "  - run basic setup         [Y]es/[N]o:       ${_cy}${p_exec_setup_basic}${_ce}"
-  _echoIt "${_pDel}" "  - run install qyadr       [Y]es/[N]o:       ${_cy}${p_exec_install_qyadr}${_ce}"
   _echoIt "${_pDel}" "Check above installation settings." "$_iw"
 }
 
@@ -316,32 +309,9 @@ chSudo(){
 	echo "$* #QALACS" >> "${configFile}"
 }
 
-# Qyadr install
-execCmd_run_installQyadr() {
-  _echoIt "${_pDel}" "About to install qyadr dotfiles..."
-  # when run alone it need userName
-  _isStringEmpty "${userName}" && getUserName
-  downloadDeployScript
-  installQyadr
-}
-
-downloadDeployScript() {
-  _echoIt "$_pDel" " ... download deploy script..."
-  local source="${p_qyadr_deploy}"
-  local destination="/home/${userName}/${qyadrDeploy}"
-  curlFile
-}
-
-installQyadr() {
-  su - "${userName}" -c "bash /home/${userName}/.qyadr-deploy.sh"
-  su - "${userName}" -c "/home/${userName}/.qyadr-install.sh install"
-  _echoIt "${_pDel}" "Installed dotfiles (qyadr)" "${_iw}"
-}
-
 # Final touch
 execCmd_run_FinalTweak(){
   servicesInit cronie
-  installVimPlugins
   setupSudoFinal
 }
 
@@ -356,11 +326,6 @@ servicesInit() {
     systemctl start "$service"
     _echoIt "${_pDel}" "Enabled and started service: ${_cg}${service}${_ce}" "${_iw}"
   done ;}
-
-installVimPlugins() {
-  sudo -u "$userName" nvim -E -c "PlugUpdate|visual|q|q"
-  [[ $? ]] && _echoIt "${_pDel}" "Installed nVim plugins" "${_it}"
-}
 
 # Utils
 readonly _pDel='[ QALACS ]'
