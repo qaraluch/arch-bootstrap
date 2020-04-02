@@ -2,6 +2,7 @@ SWITCH,REPO-TYPE,NAME,PURPOSE
 Y,d,base-devel,[core] Basic package including tools needed for building compiling and linking.
 Y,d,neovim,[editor] Default text editor.
 Y,d,zsh,[basic] Extended Bourne shell with a large number of improvements.
+Y,d,man,[basic] User manual for commands.
 Y,d,tmux,[basic] Terminal multiplexer.
 Y,d,cronie,[basic] Runs specified programs at scheduled times and related tools.
 Y,d,rsync,[basic] Utility for efficiently transferring and synchronizing files across computer systems.
