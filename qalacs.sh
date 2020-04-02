@@ -35,6 +35,7 @@ main() {
     execCmd_showAppList
     _echoDone
   elif _isStringEqual "$cmd" "run" ; then
+    checkIfAppListDownloaded
     _switchYN $p_exec_setup_basic && execCmd_run_setupBasic # setup also root passwd
     _switchYN $p_exec_setup_basic || _echoIt "${_pDel}" "Skipped basic setup" "$_ic"
 
@@ -144,6 +145,12 @@ showAppList() {
 }
 
 # Command run:
+checkIfAppListDownloaded() {
+  if _isNotFile ${appListDownloadPath}; then
+    _errorExit "${_pDel}" 'Need to download app list beforehand (qalacs.sh download). Abort...'
+  fi
+}
+
 execCmd_run_installApps() {
   _isStringEmpty "${userName}" && getUserName # for su in case of standalone run
   enableMoreCoresForCompilation
@@ -398,6 +405,11 @@ _isStringEqual(){
 _isDir() {
   local dir=$1
   [[ -d $dir ]]
+}
+
+_isNotFile() {
+  local file=$1
+  [[ ! -f $file ]]
 }
 
 _readUserInput() {
