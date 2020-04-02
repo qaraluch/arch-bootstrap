@@ -7,6 +7,8 @@
 - CALIS - Custom Arch Linux Installation Script
 - QALACS - Qaraluch's Arch Linux Auto Config Script
 
+Installation of user's dotfiles is not within scope of above scripts anymore.
+
 :warning: Disclaimer:
 
 This code is published in good faith and for learning purpose only. The code is not fully tested, so any usage of it is strictly at your own risk :see_no_evil:.
@@ -74,9 +76,8 @@ For more info read the source code :page_facing_up:.
 Next scripts is Qaraluch's Arch Linux Auto Config Script (QALACS) witch set up a functional Arch Linux environment:
 
 - create user
-- install apps from app list
+- install basic linux applications from app list
 - install AUR helper
-- install dotfiles ([qyadr](https://github.com/qaraluch/qyadr))
 
 ### Qalacs installation
 
@@ -102,9 +103,9 @@ curl https://raw.githubusercontent.com/qaraluch/arch-bootstrap/master/qalacs.sh 
 Launch the script with:
 
 ```
-chmod u+x qalacs.sh
+chmod +x qalacs.sh
 ./qalacs.sh download      # download app list
-./qalacs.sh show	  # show app list
+./qalacs.sh show	        # show app list
 ./qalacs.sh run           # run script
 ```
 
