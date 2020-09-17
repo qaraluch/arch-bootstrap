@@ -9,6 +9,8 @@
 
 Installation of user's dotfiles is not within scope of above scripts anymore.
 
+For installation Arch Linux on WSL2 see [instruction](./wsl2/installation-on-wsl2.md).
+
 :warning: Disclaimer:
 
 This code is published in good faith and for learning purpose only. The code is not fully tested, so any usage of it is strictly at your own risk :see_no_evil:.
@@ -105,7 +107,7 @@ Launch the script with:
 ```
 chmod +x qalacs.sh
 ./qalacs.sh download      # download app list
-./qalacs.sh show	        # show app list
+./qalacs.sh show          # show app list
 ./qalacs.sh run           # run script
 ```
 
